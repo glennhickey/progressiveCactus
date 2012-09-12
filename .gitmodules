@@ -34,6 +34,6 @@
 [submodule "submodules/hdf5"]
 	path = submodules/hdf5
 	url = git@github.com:UCSCReconGroup/hdf5.git
-[submodule "kyotocabinet"]
-	path = kyotocabinet
+[submodule "submodules/kyotocabinet"]
+	path = submodules/kyotocabinet
 	url = git@github.com:UCSCReconGroup/kyotocabinet.git
