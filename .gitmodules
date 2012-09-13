@@ -1,39 +1,39 @@
 [submodule "submodules/sonLib"]
 	path = submodules/sonLib
-	url = git@github.com:benedictpaten/sonLib.git
+	url = git://github.com:benedictpaten/sonLib.git
 [submodule "submodules/jobTree"]
 	path = submodules/jobTree
-	url = git@github.com:benedictpaten/jobTree.git
+	url = git://github.com:benedictpaten/jobTree.git
 [submodule "submodules/matchingAndOrdering"]
 	path = submodules/matchingAndOrdering
-	url = git@github.com:benedictpaten/matchingAndOrdering.git
+	url = git://github.com:benedictpaten/matchingAndOrdering.git
 [submodule "submodules/pinchesAndCacti"]
 	path = submodules/pinchesAndCacti
-	url = git@github.com:benedictpaten/pinchesAndCacti.git
+	url = git://github.com:benedictpaten/pinchesAndCacti.git
 [submodule "submodules/hal"]
 	path = submodules/hal
-	url = git@github.com:glennhickey/hal.git
+	url = git://github.com:glennhickey/hal.git
 [submodule "submodules/cactus2hal"]
 	path = submodules/cactus2hal
-	url = git@github.com:glennhickey/cactus2hal.git
+	url = git://github.com:glennhickey/cactus2hal.git
 [submodule "submodules/cactus"]
 	path = submodules/cactus
-	url = git@github.com:benedictpaten/cactus.git
+	url = git://github.com:benedictpaten/cactus.git
 [submodule "submodules/kyototycoon"]
 	path = submodules/kyototycoon
-	url = git@github.com:UCSCReconGroup/kyototycoon.git
+	url = git://github.com:UCSCReconGroup/kyototycoon.git
 [submodule "submodules/tokyocabinet"]
 	path = submodules/tokyocabinet
-	url = git@github.com:UCSCReconGroup/tokyocabinet.git
+	url = git://github.com:UCSCReconGroup/tokyocabinet.git
 [submodule "submodules/lastz"]
 	path = submodules/lastz
-	url = git@github.com:UCSCReconGroup/lastz.git
+	url = git://github.com:UCSCReconGroup/lastz.git
 [submodule "submodules/hdf5"]
 	path = submodules/hdf5
-	url = git@github.com:UCSCReconGroup/hdf5.git
+	url = git://github.com:UCSCReconGroup/hdf5.git
 [submodule "submodules/kyotocabinet"]
 	path = submodules/kyotocabinet
-	url = git@github.com:UCSCReconGroup/kyotocabinet.git
+	url = git://github.com:UCSCReconGroup/kyotocabinet.git
 [submodule "submodules/mafJoin"]
 	path = submodules/mafJoin
-	url = git@github.com/dentearl/mafJoin.git
+	url = git://github.com/dentearl/mafJoin.git
