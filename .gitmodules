@@ -36,4 +36,4 @@
 	url = git@github.com:UCSCReconGroup/kyotocabinet.git
 [submodule "submodules/mafJoin"]
 	path = submodules/mafJoin
-	url = https://github.com/dentearl/mafJoin.git
+	url = git@github.com/dentearl/mafJoin.git
