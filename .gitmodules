@@ -10,9 +10,6 @@
 [submodule "submodules/pinchesAndCacti"]
 	path = submodules/pinchesAndCacti
 	url = git@github.com:benedictpaten/pinchesAndCacti.git
-[submodule "submodules/mafTools"]
-	path = submodules/mafTools
-	url = git@github.com:dentearl/mafTools.git
 [submodule "submodules/hal"]
 	path = submodules/hal
 	url = git@github.com:glennhickey/hal.git
