@@ -1,7 +1,7 @@
 include include.mk
 
 external = tokyocabinet kyotocabinet kyototycoon lastz hdf5
-ucsc = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal mafTools
+ucsc = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal mafJoin
 
 modules = ${external} ${ucsc}
 #modules = ${ucsc}

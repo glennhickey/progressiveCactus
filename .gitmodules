@@ -37,3 +37,6 @@
 [submodule "submodules/kyotocabinet"]
 	path = submodules/kyotocabinet
 	url = git@github.com:UCSCReconGroup/kyotocabinet.git
+[submodule "submodules/mafJoin"]
+	path = submodules/mafJoin
+	url = https://github.com/dentearl/mafJoin.git
