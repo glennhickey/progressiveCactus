@@ -1,5 +1,4 @@
 include include.mk
-export
 
 external = tokyocabinet kyotocabinet kyototycoon lastz hdf5
 ucsc = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal mafTools
@@ -10,9 +9,6 @@ modules = ${external} ${ucsc}
 .PHONY: all %.all clean %.clean lastzRule tokyocabinetRule kyotocabinetRule hdf5Rule lastzClean cabinetClean hdf5Clean test
 
 all : lastzRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule ${ucsc:%=ucsc.%}
-
-ucsc.%:
-	cd $* && make
 
 lastzRule :
 	cd lastz && make
@@ -28,6 +24,12 @@ kyototycoonRule :
 
 hdf5Rule :
 	cd hdf5 &&./configure --prefix=$(CURDIR)/hdf5 --enable-cxx && make && make install
+
+# Important to export environment to override sonlib/include.mk
+export
+
+ucsc.%:
+	cd $* && make
 
 clean: lastzClean cabinetClean hdf5Clean ${modules:%=clean.%}
 
