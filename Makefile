@@ -5,7 +5,6 @@ modules = submodules
 all : ${modules:%=all.%}
 
 all.%:
-	echo ${kyotoTycoonIncl}
 	cd $* && make all 
 
 clean:  ${modules:%=clean.%}

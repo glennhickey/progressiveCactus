@@ -17,13 +17,13 @@ ucsc.%:
 lastzRule :
 	cd lastz && make
 
-tokyocabinetRule : $(CURDIR)/tokyocabinet/lib/libtokyocabinet.a
+tokyocabinetRule :
 	cd tokyocabinet &&./configure --prefix=$(CURDIR)/tokyocabinet && make && make install
 
-kyotocabinetRule : $(CURDIR)/kyotocabinet/lib/libkyotocabinet.a
+kyotocabinetRule :
 	cd kyotocabinet &&./configure --prefix=$(CURDIR)/kyotocabinet && make && make install
 
-kyototycoonRule : $(CURDIR)/kyototycoon/lib/libkyototycoon.a
+kyototycoonRule :
 	cd kyototycoon &&./configure --prefix=$(CURDIR)/kyototycoon --with-kc=$(CURDIR)/kyotocabinet && make && make install
 
 hdf5Rule : $(CURDIR)/hdf5/lib/libhdf5.a
@@ -39,7 +39,6 @@ lastzClean:
 
 cabinetClean:
 	rm -f $(CURDIR)/tokyocabinet/lib/*.a $(CURDIR)/kyotocabinet/lib/*.a  $(CURDIR)/kyototycoon/lib/*.a
-	touch $(CURDIR)/tokyocabinet/lib/libtokyocabinet.a $(CURDIR)/kyotocabinet/lib/libkyotocabinet.a $(CURDIR)/kyototycoon/lib/libkyototycoon.a
 
 hdf5Clean:
 	cd hdf5 && make clean
