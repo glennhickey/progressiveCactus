@@ -9,10 +9,9 @@ modules = ${external} ${ucsc}
 
 .PHONY: all %.all clean %.clean lastzRule tokyocabinetRule kyotocabinetRule hdf5Rule lastzClean cabinetClean hdf5Clean test
 
-#all : lastzRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule ${ucsc:%=all.%}
+all : lastzRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule ${ucsc:%=ucsc.%}
 
-all : ${ucsc:%=all.%}
-all.%:
+ucsc.%:
 	cd $* && make
 
 lastzRule :
