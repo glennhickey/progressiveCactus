@@ -44,7 +44,3 @@ cabinetClean:
 
 hdf5Clean:
 	cd hdf5 && make clean
-
-
-test: all
-	python allTests.py
