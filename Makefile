@@ -1,4 +1,3 @@
-include include.mk
 modules = submodules
 
 .PHONY: all %.all clean %.clean
@@ -6,7 +5,8 @@ modules = submodules
 all : ${modules:%=all.%}
 
 all.%:
-	cd $* && make all
+	echo ${kyotoTycoonIncl}
+	cd $* && make all 
 
 clean:  ${modules:%=clean.%}
 	cd $* && make clean
