@@ -26,7 +26,7 @@ kyotocabinetRule :
 kyototycoonRule :
 	cd kyototycoon &&./configure --prefix=$(CURDIR)/kyototycoon --with-kc=$(CURDIR)/kyotocabinet && make && make install
 
-hdf5Rule : $(CURDIR)/hdf5/lib/libhdf5.a
+hdf5Rule :
 	cd hdf5 &&./configure --prefix=$(CURDIR)/hdf5 --enable-cxx && make && make install
 
 clean: lastzClean cabinetClean hdf5Clean ${modules:%=clean.%}
