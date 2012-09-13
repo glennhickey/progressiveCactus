@@ -31,7 +31,7 @@ export
 ucsc.%:
 	cd $* && make
 
-clean: lastzClean cabinetClean hdf5Clean ${modules:%=clean.%}
+clean: lastzClean cabinetClean hdf5Clean ${ucsc:%=clean.%}
 
 clean.%:
 	cd $* && make clean
