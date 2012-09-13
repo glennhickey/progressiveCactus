@@ -4,8 +4,8 @@ export
 external = tokyocabinet kyotocabinet kyototycoon lastz hdf5
 ucsc = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal mafTools
 
-#modules = ${external} ${ucsc}
-modules = ${ucsc}
+modules = ${external} ${ucsc}
+#modules = ${ucsc}
 
 .PHONY: all %.all clean %.clean lastzRule tokyocabinetRule kyotocabinetRule hdf5Rule lastzClean cabinetClean hdf5Clean test
 
