@@ -11,7 +11,7 @@ modules = ${external} ${ucsc}
 all : virtPyRule lastzRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule  ${ucsc:%=ucsc.%}
 
 virtPyRule :
-	python $(CURDIR)/virutalenv/virutalenv.py ${virtPyDir}
+	python $(CURDIR)/virtualenv/virtualenv.py ${virtPyDir}
 	source ${virtPyEnv} && cd $(CURDIR)/networkx && ${virtPy} setup.py install
 	source ${virtPyEnv} && cd $(CURDIR)/psutil/ && ${virtPy} setup.py install
 
