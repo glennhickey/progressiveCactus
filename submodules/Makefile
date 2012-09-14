@@ -18,35 +18,35 @@ virtPyRule :
 	. ${virtPyEnv} && cd $(CURDIR)/networkx && ${virtPy} setup.py install
 	. ${virtPyEnv} && cd $(CURDIR)/psutil/ && ${virtPy} setup.py install
 	cp ${virtPyEnv} ${myEnv}
-	echo PYTHONPATH=$(CURDIR):\$$PYTHONPATH >> ${myEnv}
-	echo PATH=${virtPyDir}/bin:\$$PATH >> ${myEnv}
+	echo export PYTHONPATH=$(CURDIR):\$$PYTHONPATH >> ${myEnv}
+	echo export PATH=${virtPyDir}/bin:\$$PATH >> ${myEnv}
 
 lastzRule :
 	cd lastz && make
-	echo PATH=$(CURDIR)/lastz/src:$(CURDIR)/lastz/tools:\$$PATH >> ${myEnv}
+	echo export PATH=$(CURDIR)/lastz/src:$(CURDIR)/lastz/tools:\$$PATH >> ${myEnv}
 
 tokyocabinetRule :
 	cd tokyocabinet &&./configure --prefix=$(CURDIR)/tokyocabinet && make && make install
-	echo PATH=$(CURDIR)/tokyocabinet/bin:\$$PATH >> ${myEnv}
+	echo export PATH=$(CURDIR)/tokyocabinet/bin:\$$PATH >> ${myEnv}
 
 kyotocabinetRule :
 	cd kyotocabinet &&./configure --prefix=$(CURDIR)/kyotocabinet && make && make install
-	echo PATH=$(CURDIR)/kyotocabinet/bin:\$$PATH >> ${myEnv}
+	echo export PATH=$(CURDIR)/kyotocabinet/bin:\$$PATH >> ${myEnv}
 
 kyototycoonRule :
 	cd kyototycoon &&./configure --prefix=$(CURDIR)/kyototycoon --with-kc=$(CURDIR)/kyotocabinet && make && make install
-	echo PATH=$(CURDIR)/kyototycoon/bin:\$$PATH >> ${myEnv}
+	echo export PATH=$(CURDIR)/kyototycoon/bin:\$$PATH >> ${myEnv}
 
 hdf5Rule :
 	cd hdf5 &&./configure --prefix=$(CURDIR)/hdf5 --enable-cxx && make && make install
-	echo PATH=$(CURDIR)/hdf5/bin:\$$PATH >> ${myEnv}
+	echo export PATH=$(CURDIR)/hdf5/bin:\$$PATH >> ${myEnv}
 
 # Important to export environment to override sonlib/include.mk
 export
 
 ucsc.%:
 	cd $* && make
-	echo PATH=$(CURDIR)/$*/bin:\$$PATH >> ${myEnv}
+	echo export PATH=$(CURDIR)/$*/bin:\$$PATH >> ${myEnv}
 
 clean: lastzClean cabinetClean hdf5Clean ${ucsc:%=clean.%}
 
@@ -68,4 +68,4 @@ test.%:
 	. ${myEnv} && cd $* && make test
 
 datasets:
-	echo SON_TRACE_DATASETS=$(CURDIR)/cactusTestData >> ${myEnv}
+	echo export SON_TRACE_DATASETS=$(CURDIR)/cactusTestData >> ${myEnv}
