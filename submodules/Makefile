@@ -18,6 +18,7 @@ virtPyRule :
 	source ${virtPyEnv} && cd $(CURDIR)/networkx && ${virtPy} setup.py install
 	source ${virtPyEnv} && cd $(CURDIR)/psutil/ && ${virtPy} setup.py install
 	cp ${virtPyEnv} ${myEnv}
+	echo PYTHONPATH=$(CURDIR):\$$PYTHONPATH >> ${myEnv}
 	echo PATH=${virtPyDir}/bin:\$$PATH >> ${myEnv}
 
 lastzRule :
