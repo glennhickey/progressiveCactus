@@ -15,8 +15,8 @@ envRefreshRule:
 
 virtPyRule :
 	python $(CURDIR)/virtualenv/virtualenv.py ${virtPyDir}
-	source ${virtPyEnv} && cd $(CURDIR)/networkx && ${virtPy} setup.py install
-	source ${virtPyEnv} && cd $(CURDIR)/psutil/ && ${virtPy} setup.py install
+	. ${virtPyEnv} && cd $(CURDIR)/networkx && ${virtPy} setup.py install
+	. ${virtPyEnv} && cd $(CURDIR)/psutil/ && ${virtPy} setup.py install
 	cp ${virtPyEnv} ${myEnv}
 	echo PYTHONPATH=$(CURDIR):\$$PYTHONPATH >> ${myEnv}
 	echo PATH=${virtPyDir}/bin:\$$PATH >> ${myEnv}
@@ -65,7 +65,7 @@ hdf5Clean:
 test: ${ucsc:%=test.%}
 
 test.%:
-	source ${myEnv} && cd $* && make test
+	. ${myEnv} && cd $* && make test
 
 datasets:
 	echo SON_TRACE_DATASETS=$(CURDIR)/cactusTestData >> ${myEnv}
