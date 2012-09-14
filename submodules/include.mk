@@ -25,3 +25,6 @@ basicLibsDependencies = ${sonLibPath}/sonLib.a ${sonLibPath}/cuTest.a
 h5path = $(CURDIR)/hdf5
 PATH := ${h5path}/bin:${PATH}
 h5prefix = -prefix=${h5path}
+
+#environment
+myEnv = $(CURDIR)/../environment

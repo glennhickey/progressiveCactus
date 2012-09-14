@@ -18,5 +18,7 @@ clean:  ${modules:%=clean.%}
 clean.%:
 	cd $* && make clean
 
-test: all
-	python allTests.py
+test: ${modules:%=test.%}
+
+test.%:
+	cd $* && make test
