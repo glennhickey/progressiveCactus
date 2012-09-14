@@ -40,3 +40,9 @@
 [submodule "submodules/virtualenv"]
 	path = submodules/virtualenv
 	url = git://github.com/pypa/virtualenv.git
+[submodule "submodules/networkx"]
+	path = submodules/networkx
+	url = git://github.com/networkx/networkx.git
+[submodule "submodules/psutil"]
+	path = submodules/psutil
+	url = git://github.com/tamentis/psutil.git

@@ -6,9 +6,14 @@ ucsc = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal 
 modules = ${external} ${ucsc}
 #modules = ${ucsc}
 
-.PHONY: all %.all clean %.clean lastzRule tokyocabinetRule kyotocabinetRule hdf5Rule lastzClean cabinetClean hdf5Clean test
+.PHONY: all %.all clean %.clean virtPyRule lastzRule tokyocabinetRule kyotocabinetRule hdf5Rule lastzClean cabinetClean hdf5Clean test
 
-all : lastzRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule ${ucsc:%=ucsc.%}
+all : virtPyRule lastzRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule  ${ucsc:%=ucsc.%}
+
+virtPyRule :
+	python $(CURDIR)/virtualEnv/virtualEnv.py ${virtPyDir}
+	source ${virtPyEnv} && cd $(CURDIR)/networkx && ${virtPy} setup.py install
+	source ${virtPyEnv} && cd $(CURDIR)/psutil/ && ${virtPy} setup.py install
 
 lastzRule :
 	cd lastz && make
