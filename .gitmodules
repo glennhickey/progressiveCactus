@@ -46,3 +46,6 @@
 [submodule "submodules/psutil"]
 	path = submodules/psutil
 	url = git://github.com/tamentis/psutil.git
+[submodule "submodules/cactusTestData"]
+	path = submodules/cactusTestData
+	url = git://github.com/UCSCReconGroup/cactusTestData.git

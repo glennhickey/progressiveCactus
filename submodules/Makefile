@@ -6,9 +6,9 @@ ucsc = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal 
 modules = ${external} ${ucsc}
 #modules = ${ucsc}
 
-.PHONY: all %.all clean %.clean envRereshRule virtPyRule lastzRule tokyocabinetRule kyotocabinetRule hdf5Rule lastzClean cabinetClean hdf5Clean test
+.PHONY: all %.all clean %.clean envRereshRule virtPyRule lastzRule tokyocabinetRule kyotocabinetRule hdf5Rule lastzClean cabinetClean hdf5Clean test datasets
 
-all : envRefreshRule virtPyRule lastzRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule  ${ucsc:%=ucsc.%}
+all : envRefreshRule virtPyRule lastzRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule datasets ${ucsc:%=ucsc.%}
 
 envRefreshRule:
 	rm -f ${myEnv}
@@ -65,3 +65,6 @@ test: ${ucsc:%=test.%}
 
 test.%:
 	source ${myEnv} && cd $* && make test
+
+datasets:
+	echo SON_TRACE_DATASETS=$(CURDIR)/cactusTestData >> ${myEnv}
