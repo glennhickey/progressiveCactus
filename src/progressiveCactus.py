@@ -30,6 +30,8 @@ from optparse import OptionParser
 from optparse import OptionGroup
 import imp
 import socket
+import signal
+import traceback
 
 from sonLib.bioio import logger
 from sonLib.bioio import setLoggingFromOptions
@@ -42,6 +44,7 @@ from jobTree.scriptTree.stack import Stack
 
 from cactus.progressive.ktserverLauncher import KtserverLauncher
 from cactus.progressive.multiCactusProject import MultiCactusProject
+from cactus.progressive.experimentWrapper import ExperimentWrapper
 
 from seqFile import SeqFile
 from projectWrapper import ProjectWrapper
@@ -93,7 +96,7 @@ def initParser():
                        help="starting port (lower bound of range) of ktservers",
                        default=1978)
     ktGroup.add_option("--dontCleanKtservers", dest="dontCleanKtservers",
-                       action=store_true, default=False)
+                       action="store_true", default=False)
     parser.add_option_group(ktGroup)
  
     return parser
@@ -101,7 +104,7 @@ def initParser():
 # Try to weed out errors early by checking options and paths
 def validateOptions(options):
     if options.database != "tokyo_cabinet" and\
-       options.database != "kyoto_tyocoon":
+       options.database != "kyoto_tycoon":
         raise RuntimeError("Invalid database type: %s" % options.database)
 
 # Convert the jobTree options taken in by the parser back
@@ -147,16 +150,17 @@ def getEnvFilePath():
 def canContinue(jtPath):
     try:
         envFile = getEnvFilePath()
-        cmd = '. %s && jobTreeStatus --jobTree %s' % (envFile, jtPath)
+        cmd = '. %s && jobTreeStatus --jobTree %s 2>&1' % (envFile, jtPath)
         output = popenCatch(cmd)
         if output.find('There are 0 jobs currently in job tree') < 0:
             return True
     except:
         return False
     
-def runResume(jtPath):
+def runResume(workDir, jtPath):
     envFile = getEnvFilePath()
-    cmd = '. %s && jobTreeRun --jobTree %s' % (envFile, jtPath)
+    logFile = os.path.join(workDir, 'cactus.log')
+    cmd = '. %s && jobTreeRun --jobTree %s &> %s' % (envFile, jtPath, logFile)
     system(cmd)
 
 # Run cactus progressive on the project that has been created in workDir.
@@ -166,7 +170,9 @@ def runCactus(workDir, jtCommands):
     envFile = getEnvFilePath()
     pjPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
                           '%s_project.xml' % ProjectWrapper.alignmentDirName)
-    cmd = '. %s && cactus_progressive.py %s %s' % (envFile, jtCommands, pjPath)
+    logFile = os.path.join(workDir, 'cactus.log')
+    cmd = '. %s && cactus_progressive.py %s %s &> %s' % (envFile, jtCommands,
+                                                         pjPath, logFile)
     system(cmd)
 
 def checkCactus(workDir, options):
@@ -182,9 +188,11 @@ def extractOutput(workDir, outputHalFile, options):
         cmd = 'mv %s %s' % (rootPath, options.outputMaf)
         system(cmd)
     envFile = getEnvFilePath()
+    logFile = os.path.join(workDir, 'cactus2hal.log')
     pjPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
                           '%s_project.xml' % ProjectWrapper.alignmentDirName)
-    cmd = '. %s && cactus2hal.py %s %s' % (envFile, jtPath, outputHalFile)
+    cmd = '. %s && cactus2hal.py %s %s &> %s' % (envFile, pjPath,
+                                                 outputHalFile, logFile)
     system(cmd)
 
 # Trailing ktservers are constant source of aggravation.  If an error
@@ -192,26 +200,36 @@ def extractOutput(workDir, outputHalFile, options):
 # the working dir and attempt to kill the server for each subtree.
 # There is an option, dontCleanKtservers, to prevent this since they
 # are frequently useful for debugging.
-def cleanKtServers(workDir, options):
-    try:
-        if options.database == "kyoto_tycoon" and\
-               options.dontCleanKtservers == False:
-            pjPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
-                                  '%s_project.xml' %
-                                  ProjectWrapper.alignmentDirName)
-            mcProj = MultiCactusProject()
-            mcProj.readXML(pjPath)
-            for node,expPath in mcProj.expMap.items():
-                try:
-                    exp = ExperimentWrapper(ET.parse(expPath))
-                    ktserver = KtserverLauncher()
-                    ktserver.killServer(exp)
-                except:
-                    pass
-    except:
-        pass
+# Note workDir and options are added to cleanKtServers() as closure
+# arguments to abide by signal interface
+def cleanKtServersCallback(workDir, options):
+    def cleanKtServers(signal, frame):
+        try:
+            if options.database == "kyoto_tycoon" and\
+                   options.dontCleanKtservers == False:
+                pjPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
+                                      '%s_project.xml' %
+                                      ProjectWrapper.alignmentDirName)
+                mcProj = MultiCactusProject()
+                mcProj.readXML(pjPath)
+                sys.stderr.write("Attempting to clean any trailing ktservers.."
+                                 " (please be patient)\n")
+                for node,expPath in mcProj.expMap.items():
+                    try:
+                        exp = ExperimentWrapper(ET.parse(expPath).getroot())
+                        ktserver = KtserverLauncher()
+                        ktserver.killServer(exp)
+                    except:
+                        pass
+        except:
+            pass
+    return cleanKtServers
 
 def main():
+    # init as dummy function
+    cleanKtFn = lambda x,y:x
+    stage = 0
+    workDir = None
     try:
         parser = initParser()
         options, args = parser.parse_args()
@@ -230,28 +248,43 @@ def main():
         outputHalFile = args[2]
         validateOptions(options)
 
+        cleanKtFn = cleanKtServersCallback(workDir, options)
+        signal.signal(signal.SIGINT, cleanKtFn)
+
         jtPath = os.path.join(workDir, "jobTree")
+        stage = 1
+        print "Beginning Alignment"
         if canContinue(jtPath):
-            print("incomplete jobTree found in %s: attempting to resume..\n"
-                  " (if you want to start from scratch, delete %s\n"
-                  "then rerun)\n" % workDir)
-            runResume(jtPath)
+            print("incomplete jobTree found in %s/jobTree: attempting to "
+                  "resume..\n"
+                  " (if you want to start from scratch, delete %s "
+                  "then rerun)\n" % (workDir, workDir))
+            runResume(workDir, jtPath)
         else:
             system("rm -rf %s" % jtPath) 
             projWrapper = ProjectWrapper(options, seqFile, workDir)
             projWrapper.writeXml()
             jtCommands = getJobTreeCommands(jtPath, parser, options)
             runCactus(workDir, jtCommands)
-            
+
+        stage = 2
+        print "Beginning HAL Export"
         extractOutput(workDir, outputHalFile, options)
-        print "Alignment successful.\n" "Temporary data was left in: %s\n" \
-              % workdir
+        print "Success.\n" "Temporary data was left in: %s\n" \
+              % workDir
         
         return 0
     
     except RuntimeError, e:
-        print "Error: " + str(e)
-        cleanKtServers(workDir)
+        sys.stderr.write("Error: %s\n" % str(e))
+        sys.stderr.write("Temporary data was left in: %s\n" % workDir)
+        if stage == 1:
+            sys.stderr.write("More information can be found in %s\n" %
+                             os.path.join(workDir, "cactus.log"))
+        elif stage == 2:
+            sys.stderr.write("More information can be found in %s\n" %
+                             os.path.join(workDir, "cactus2hal.log"))
+        cleanKtFn(workDir, options)
         return -1
 
 if __name__ == '__main__':

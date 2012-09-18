@@ -76,8 +76,8 @@ class ProjectWrapper:
         dbElem = ET.SubElement(confElem, database)
 
         if self.options.database == "kyoto_tycoon":
-            dbElem.attrib["host"] = self.options.host
-            dbElem.attrib["port"] = self.options.port
+            dbElem.attrib["host"] = str(self.options.host)
+            dbElem.attrib["port"] = str(self.options.port)
             
         self.experimentWrapper = ExperimentWrapper(expXml)
 
