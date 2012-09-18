@@ -161,13 +161,14 @@ def validateInput(workDir, outputHalFile, options):
 # out to command line options to pass to progressive cactus
 def getJobTreeCommands(jtPath, parser, options):
     cmds = "--jobTree %s" % jtPath
-    for optName in parser.option_list:
-        og = parser.get_option_group(optName)  
-        if og is not None and og.title == "JobTree Options":
-            opt = parser.get_option(optName)
-            cmds += " " + optName
-            if opt.nargs > 0:
-                cmds += getattr(options, opt.dest)
+    for optGroup in parser.option_groups:
+        if optGroup.title == "JobTree Options":
+            for opt in optGroup.option_list:
+                if hasattr(options, opt.dest) and \
+                    getattr(options, opt.dest) != optGroup.defaults[opt.dest]:
+                    cmds += " %s" % str(opt)
+                    if opt.nargs > 0:
+                        cmds += " %s" % getattr(options, opt.dest)
     return cmds
 
 # Go through a text file and add every word inside to an arguments list
