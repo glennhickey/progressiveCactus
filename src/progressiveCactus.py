@@ -102,9 +102,11 @@ def initParser():
                        help="Kyoto Tycoon server type "\
                             "(memory, snapshot, or disk)",
                        default='memory')
-    ktGroup.add_option("--ktOpts", dest="ktOpts",
-                       help="Command line ktserver options",
-                       default=None)
+    # sonlib doesn't allow for spaces in attributes in the db conf
+    # which renders this options useless
+    #ktGroup.add_option("--ktOpts", dest="ktOpts",
+    #                   help="Command line ktserver options",
+    #                   default=None)
     ktGroup.add_option("--ktCreateTuning", dest="ktCreateTuning",
                        help="ktserver options when creating db "\
                             "(ex #bnum=30m#msiz=50g)",
@@ -122,8 +124,11 @@ def initParser():
 # Try to weed out errors early by checking options and paths
 def validateInput(workDir, outputHalFile, options):
     try:
+        if workDir.find(' ') >= 0:
+            raise RuntimeError("Cactus does not support spaces in pathnames: %s"
+                               % workDir)
         if not os.path.isdir(workDir):
-            os.path.makedirs(workDir)
+            os.makedirs(workDir)
         if not os.path.isdir(workDir) or not os.access(workDir, os.W_OK):
             raise
     except:
@@ -229,7 +234,7 @@ def checkCactus(workDir, options):
 def extractOutput(workDir, outputHalFile, options):
     if options.outputMaf is not None:
         rootPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
-        SeqFile.rootName, seqFile.rootName + '.maf')
+        SeqFile.rootName, SeqFile.rootName + '.maf')
         cmd = 'mv %s %s' % (rootPath, options.outputMaf)
         system(cmd)
     envFile = getEnvFilePath()
@@ -258,7 +263,7 @@ def cleanKtServersCallback(workDir, options):
                 mcProj = MultiCactusProject()
                 mcProj.readXML(pjPath)
                 sys.stderr.write("Attempting to clean any trailing ktservers.."
-                                 " (please be patient)\n")
+                                 " (please be patient)\n\n")
                 for node,expPath in mcProj.expMap.items():
                     try:
                         exp = ExperimentWrapper(ET.parse(expPath).getroot())
@@ -298,7 +303,7 @@ def main():
 
         jtPath = os.path.join(workDir, "jobTree")
         stage = 1
-        print "Beginning Alignment"
+        print "\nBeginning Alignment"
         if canContinue(jtPath):
             print("incomplete jobTree found in %s/jobTree: attempting to "
                   "resume..\n"
@@ -311,6 +316,9 @@ def main():
             projWrapper.writeXml()
             jtCommands = getJobTreeCommands(jtPath, parser, options)
             runCactus(workDir, jtCommands)
+        cmd = 'jobTreeStatus --failIfNotComplete --jobTree %s &> /dev/null' %\
+              jtPath
+        system(cmd)
 
         stage = 2
         print "Beginning HAL Export"
@@ -321,8 +329,9 @@ def main():
         return 0
     
     except RuntimeError, e:
-        sys.stderr.write("Error: %s\n" % str(e))
-        sys.stderr.write("Temporary data was left in: %s\n" % workDir)
+        sys.stderr.write("Error: %s\n\n" % str(e))
+        if os.path.isdir(workDir):
+            sys.stderr.write("Temporary data was left in: %s\n" % workDir)
         if stage == 1:
             sys.stderr.write("More information can be found in %s\n" %
                              os.path.join(workDir, "cactus.log"))

@@ -36,6 +36,7 @@ from sonLib.bioio import system
 
 from seqFile import SeqFile
 from cactus.progressive.experimentWrapper import ExperimentWrapper
+from cactus.progressive.experimentWrapper import DbElemWrapper
 from cactus.progressive.configWrapper import ConfigWrapper
 from cactus.shared.common import cactusRootPath
 
@@ -53,7 +54,7 @@ class ProjectWrapper:
         self.seqFile = seqFile
         self.workingDir = workingDir
         self.configWrapper = None
-        self.experimentWrapper = None
+        self.expWrapper = None
         self.processConfig()
         self.processExperiment()
 
@@ -64,6 +65,11 @@ class ProjectWrapper:
         configXml = ET.parse(configPath).getroot()
         self.configWrapper = ConfigWrapper(configXml)
         # here we can go through the options and apply some to the config
+        self.configWrapper.setBuildHal(True)
+        self.configWrapper.setBuildFasta(True)
+        if self.options.outputMaf is not None:
+            self.configWrapper.setBuildMaf(True)
+            self.configWrapper.setJoinMaf(True)
 
     def processExperiment(self):
         expXml = self.seqFile.toXMLElement()
@@ -74,26 +80,41 @@ class ProjectWrapper:
         confElem = ET.SubElement(cdElem, "st_kv_database_conf")
         confElem.attrib["type"] = database
         dbElem = ET.SubElement(confElem, database)
+        self.expWrapper = ExperimentWrapper(expXml)
 
         if self.options.database == "kyoto_tycoon":
-            dbElem.attrib["host"] = str(self.options.ktHost)
-            dbElem.attrib["port"] = str(self.options.ktPort)
-            
-        self.experimentWrapper = ExperimentWrapper(expXml)
+            self.expWrapper.setDbHost(str(self.options.ktHost))
+            self.expWrapper.setDbPort(str(self.options.ktPort))
+            if self.options.ktType == 'memory':
+                self.expWrapper.setDbInMemory(True)
+                self.expWrapper.setDbSnapshot(False)
+            elif self.options.ktType == 'snapshot':
+                self.expWrapper.setDbInMemory(True)
+                self.expWrapper.setDbSnapshot(True)
+            else:
+                assert self.options.ktType == 'disk'
+                self.expWrapper.setDbInMemory(False)
+                self.expWrapper.setDbSnapshot(False)
+            # sonlib doesn't allow for spaces in attributes in the db conf
+            # which renders this options useless
+            # if self.options.ktOpts is not None:
+            #    self.expWrapper.setDbServerOptions(self.options.ktOpts)
+            if self.options.ktCreateTuning is not None:
+                self.expWrapper.setDbCreateTuningOptions(
+                    self.options.ktCreateTuning)
+            if self.options.ktOpenTuning is not None:
+                self.expWrapper.setDbReadTuningOptions(
+                    self.options.ktOpenTuning)
 
     def writeXml(self):
-        if not os.path.exists(self.workingDir):
-            os.makedirs(self.workingDir)
-        if not os.path.isdir(self.workingDir):
-            raise RuntimeError("Error creating workDir %s" % self.workingDir)
-        
+        assert os.path.isdir(self.workingDir)
         configPath = os.path.abspath(
             os.path.join(self.workingDir, "config.xml"))
         expPath = os.path.abspath(
             os.path.join(self.workingDir, "expTemplate.xml"))
-        self.experimentWrapper.setConfigPath(configPath)
+        self.expWrapper.setConfigPath(configPath)
         self.configWrapper.writeXML(configPath)
-        self.experimentWrapper.writeXML(expPath)
+        self.expWrapper.writeXML(expPath)
 
         projPath = os.path.join(self.workingDir,
                                 ProjectWrapper.alignmentDirName)
