@@ -45,6 +45,7 @@ from jobTree.scriptTree.stack import Stack
 from cactus.progressive.ktserverLauncher import KtserverLauncher
 from cactus.progressive.multiCactusProject import MultiCactusProject
 from cactus.progressive.experimentWrapper import ExperimentWrapper
+from cactus.progressive.configWrapper import ConfigWrapper
 
 from seqFile import SeqFile
 from projectWrapper import ProjectWrapper
@@ -82,19 +83,36 @@ def initParser():
     parser.add_option("--outputMaf", dest="outputMaf",
                       help="Path of output alignment in .maf format.",
                       default=None)
-
+    parser.add_option("--configFile", dest="configFile",
+                      help="Specify cactus configuration file",
+                      default=None)
 
     #Kyoto Tycoon Options
     ktGroup = OptionGroup(parser, "kyoto_tycoon Options",
                           "Kyoto tycoon provides a client/server framework "
                           "for large in-memory hash tables and is available "
                           "via the --database option.")
-    ktGroup.add_option("--host", dest="host",
+    ktGroup.add_option("--ktHost", dest="ktHost",
                        help="host to specifiy for ktserver",
                        default=socket.gethostname())
-    ktGroup.add_option("--port", dest="port",
+    ktGroup.add_option("--ktPort", dest="ktPort",
                        help="starting port (lower bound of range) of ktservers",
                        default=1978)
+    ktGroup.add_option("--ktType", dest="ktType",
+                       help="Kyoto Tycoon server type "\
+                            "(memory, snapshot, or disk)",
+                       default='memory')
+    ktGroup.add_option("--ktOpts", dest="ktOpts",
+                       help="Command line ktserver options",
+                       default=None)
+    ktGroup.add_option("--ktCreateTuning", dest="ktCreateTuning",
+                       help="ktserver options when creating db "\
+                            "(ex #bnum=30m#msiz=50g)",
+                       default=None)
+    ktGroup.add_option("--ktOpenTuning", dest="ktOpenTuning",
+                       help="ktserver options when opening existing db "\
+                            "(ex #opts=ls#ktopts=p)",
+                       default=None)
     ktGroup.add_option("--dontCleanKtservers", dest="dontCleanKtservers",
                        action="store_true", default=False)
     parser.add_option_group(ktGroup)
@@ -102,10 +120,37 @@ def initParser():
     return parser
 
 # Try to weed out errors early by checking options and paths
-def validateOptions(options):
+def validateInput(workDir, outputHalFile, options):
+    try:
+        if not os.path.isdir(workDir):
+            os.path.makedirs(workDir)
+        if not os.path.isdir(workDir) or not os.access(workDir, os.W_OK):
+            raise
+    except:
+        raise RuntimeError("Can't write to workDir: %s" % workDir)
+    try:
+        open(outputHalFile, "w")
+    except:
+        raise RuntimeError("Unable to write to hal: %s" % outputHalFile)
     if options.database != "tokyo_cabinet" and\
-       options.database != "kyoto_tycoon":
+        options.database != "kyoto_tycoon":
         raise RuntimeError("Invalid database type: %s" % options.database)
+    if options.outputMaf is not None:
+        try:
+            open(options.outputMaf, "w")
+        except:
+            raise RuntimeError("Unable to write to maf: %s" % options.outputMaf)
+    if options.configFile is not None:
+        try:
+            ConfigWrapper(ET.parse(options.configFile).getroot())
+        except:
+            raise RuntimeError("Unable to read config: %s" % options.configFile)
+    if options.database == 'kyoto_tycoon':
+        if options.ktType.lower() != 'memory' and\
+           options.ktType.lower() != 'snapshot' and\
+           options.ktType.lower() != 'disk':
+            raise RuntimeError("Invalid ktserver type specified: %s. Must be "
+                               "memory, snapshot or disk" % options.ktType)    
 
 # Convert the jobTree options taken in by the parser back
 # out to command line options to pass to progressive cactus
@@ -123,7 +168,7 @@ def getJobTreeCommands(jtPath, parser, options):
 # Go through a text file and add every word inside to an arguments list
 # which will be prepended to sys.argv.  This way both the file and
 # command line are passed to the option parser, with the command line
-# getting priority.  Note that whitespace within tokens could be an issue
+# getting priority. 
 def parseOptionsFile(path):
     if not os.path.isfile(path):
         raise RuntimeError("Options File not found: %s" % path)
@@ -132,7 +177,7 @@ def parseOptionsFile(path):
     for l in optFile:
         line = l.rstrip()
         if line:
-            args += line.split()
+            args += shlex.split(line)
 
 # This source file should always be in progressiveCactus/src.  So
 # we return the path to progressiveCactus/environment, which needs
@@ -246,7 +291,7 @@ def main():
         seqFile = SeqFile(args[0])
         workDir = args[1]
         outputHalFile = args[2]
-        validateOptions(options)
+        validateInput(workDir, outputHalFile, options)
 
         cleanKtFn = cleanKtServersCallback(workDir, options)
         signal.signal(signal.SIGINT, cleanKtFn)
