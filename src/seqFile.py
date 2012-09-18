@@ -29,8 +29,6 @@ import copy
 from optparse import OptionParser
 from optparse import OptionGroup
 import imp
-import psutil
-import networkx
 import string
 
 from sonLib.nxtree import NXTree
@@ -49,6 +47,7 @@ from sonLib.nxnewick import NXNewick
 # dog /users/name/fasta/dog.fa
 # cat /tmp/cat/
 class SeqFile:
+    rootName = 'ProgressiveCactusRoot'
     def __init__(self, path=None):
         if path is not None:
             self.parseFile(path)
@@ -79,6 +78,7 @@ class SeqFile:
                     if name in self.pathMap:
                         raise RuntimeError("Duplicate name found: %s" % name)
                     self.pathMap[name] = path
+        self.tree.setName(self.tree.getRootId(), SeqFile.rootName)
         self.validate()
 
     def validate(self):

@@ -29,8 +29,6 @@ import copy
 from optparse import OptionParser
 from optparse import OptionGroup
 import imp
-import psutil
-import networkx
 import string
 import socket
 
@@ -49,6 +47,7 @@ from cactus.shared.common import cactusRootPath
 # - run cactus_createMultiCactusProject
 # - now ready to launch cactus progressive
 class ProjectWrapper:
+    alignmentDirName = 'progressiveAlignment'
     def __init__(self, options, seqFile, workingDir):
         self.options = options
         self.seqFile = seqFile
@@ -96,7 +95,8 @@ class ProjectWrapper:
         self.configWrapper.writeXML(configPath)
         self.experimentWrapper.writeXML(expPath)
 
-        projPath = os.path.join(self.workingDir, "progressiveAlignment")
+        projPath = os.path.join(self.workingDir,
+                                ProjectWrapper.alignmentDirName)
         if os.path.exists(projPath):
             system("rm -rf %s" % projPath)
 
