@@ -1,0 +1,11 @@
+((((HUMAN:0.006969, CHIMP:0.009727):0.025291, BABOON:0.044568):0.11,(MOUSE:0.072818, RAT:0.081244):0.260342):0.023260,((DOG:0.07, CAT:0.07):0.087381,(PIG:0.06, COW:0.06):0.104728):0.04);
+
+HUMAN ./submodules/cactusTestData/blanchettesSimulation/00.job/HUMAN
+BABOON ./submodules/cactusTestData/blanchettesSimulation/00.job/BABOON
+CHIMP ./submodules/cactusTestData/blanchettesSimulation/00.job/CHIMP
+RAT ./submodules/cactusTestData/blanchettesSimulation/00.job/RAT
+CAT ./submodules/cactusTestData/blanchettesSimulation/00.job/CAT
+PIG ./submodules/cactusTestData/blanchettesSimulation/00.job/PIG
+COW ./submodules/cactusTestData/blanchettesSimulation/00.job/COW
+MOUSE ./submodules/cactusTestData/blanchettesSimulation/00.job/MOUSE
+DOG ./submodules/cactusTestData/blanchettesSimulation/00.job/DOG
