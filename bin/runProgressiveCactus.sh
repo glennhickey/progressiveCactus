@@ -20,5 +20,5 @@
 
 binDir=$(dirname $0)
 envFile=${binDir}/../environment
-. ${envFile} && python ${binDir}../src/progressiveCactus.py $@
+. ${envFile} && python ${binDir}/../src/progressiveCactus.py $@
 exit
