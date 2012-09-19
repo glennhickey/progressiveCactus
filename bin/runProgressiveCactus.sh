@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-pcDir=$(dirname $0)
-envFile=${pcDir}/environment
-. ${envFile} && python ${pcDir}/src/progressiveCactus.py $@
+binDir=$(dirname $0)
+envFile=${binDir}/../environment
+. ${envFile} && python ${binDir}../src/progressiveCactus.py $@
 exit
