@@ -51,7 +51,7 @@ from seqFile import SeqFile
 from projectWrapper import ProjectWrapper
 
 def initParser():
-    usage = "usage: %prog [options] <seqFile> <workDir> <outputHalFile>\n\n"\
+    usage = "usage: runProgressiveCactus.sh [options] <seqFile> <workDir> <outputHalFile>\n\n"\
              "Required Arguments:\n"\
              "  <seqFile>\t\tFile containing newick tree and seqeunce paths"\
              " paths.\n"\
