@@ -121,7 +121,7 @@ Align the small Blanchette alignment
 
 ### Export MAF
 
-    bin/runProgressiveCactus.sh examples/blanchette00.txt ./work ./work/b00.hal --outputMAF ./work/b00.maf
+    bin/runProgressiveCactus.sh examples/blanchette00.txt ./work ./work/b00.hal --outputMaf ./work/b00.maf
 
 ### Use kyoto_tycoon
 
@@ -160,7 +160,7 @@ These packages are linked to via their github locations (or our mirror if they w
 * [HDF5](http://www.hdfgroup.org/HDF5/)
 * [lastz](http://www.bx.psu.edu/~rsharris/lastz/)
 
-We thank all the authors of the above for sharing their high quality free software with the community.
+We thank all the authors of the above for sharing their high quality free software with the community.  
 
 Citing
 ------
