@@ -1,0 +1,7 @@
+(((simHuman:0.0067,simChimp:0.006667):0.00225,simGorilla:0.008825):0.00968,simOrang:0.018318);
+
+simHuman ./submodules/cactusTestData/evolver/primates/loci1/simHuman.chr6
+simChimp ./submodules/cactusTestData/evolver/primates/loci1/simChimp.chr6
+simGorilla ./submodules/cactusTestData/evolver/primates/loci1/simGorilla.chr6
+simOrang ./submodules/cactusTestData/evolver/primates/loci1/simOrang.chr6
+

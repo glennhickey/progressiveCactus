@@ -1,0 +1,7 @@
+((simHuman:0.144018,(simMouse:0.084509,simRat:0.091589):0.271974):0.020593,(simCow:0.18908,simDog:0.16303):0.032898);
+
+simHuman ./submodules/cactusTestData/evolver/mammals/loci1/simHuman.chr6
+simMouse ./submodules/cactusTestData/evolver/mammals/loci1/simMouse.chr6
+simRat ./submodules/cactusTestData/evolver/mammals/loci1/simRat.chr6
+simCow ./submodules/cactusTestData/evolver/mammals/loci1/simCow.chr6
+simDog ./submodules/cactusTestData/evolver/mammals/loci1/simDog.chr6
