@@ -78,7 +78,8 @@ def initParser():
                       help="Text file containing command line options to use as"\
                       " defaults", default=None)
     parser.add_option("--database", dest="database",
-                      help="Database type: tokyo_cabinet or kyoto_tycoon",
+                      help="Database type: tokyo_cabinet or kyoto_tycoon"
+                      " [default: %default]",
                       default="tokyo_cabinet")
     parser.add_option("--outputMaf", dest="outputMaf",
                       help="Path of output alignment in .maf format.",
@@ -93,14 +94,17 @@ def initParser():
                           "for large in-memory hash tables and is available "
                           "via the --database option.")
     ktGroup.add_option("--ktHost", dest="ktHost",
-                       help="host to specifiy for ktserver",
+                       help="host to specifiy for ktserver"
+                       " [default: %default]",
                        default=socket.gethostname())
     ktGroup.add_option("--ktPort", dest="ktPort",
-                       help="starting port (lower bound of range) of ktservers",
+                       help="starting port (lower bound of range) of ktservers"
+                       " [default: %default]",
                        default=1978)
     ktGroup.add_option("--ktType", dest="ktType",
-                       help="Kyoto Tycoon server type "\
-                            "(memory, snapshot, or disk)",
+                       help="Kyoto Tycoon server type "
+                       "(memory, snapshot, or disk)"
+                       " [default: %default]",
                        default='memory')
     # sonlib doesn't allow for spaces in attributes in the db conf
     # which renders this options useless
@@ -284,6 +288,9 @@ def main():
     try:
         parser = initParser()
         options, args = parser.parse_args()
+        if len(args) == 0:
+            parser.print_help()
+            return 1
         if len(args) != 3:
             raise RuntimeError("Error parsing command line. Exactly 3 arguments are required but %d arguments were detected: %s" % (len(args), str(args)))
         

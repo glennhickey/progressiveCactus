@@ -24,12 +24,10 @@ envFile=${binDir}/../environment
 # need to go through this monkey business to make sure arguments with spaces
 # don't get split when passing to python 
 options=""
-i=1
 for arg in "$@"
 do
 	 options="$options '${arg}'"
-	 let "i+=1"
 done
-echo $options
+
 . ${envFile} && eval python ${binDir}/../src/progressiveCactus.py "$options"
 exit
