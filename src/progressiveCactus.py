@@ -279,20 +279,21 @@ def cleanKtServersCallback(workDir, options):
 def main():
     # init as dummy function
     cleanKtFn = lambda x,y:x
-    stage = 0
+    stage = -1
     workDir = None
     try:
         parser = initParser()
         options, args = parser.parse_args()
         if len(args) != 3:
-            parser.print_help()
-            return 1
+            raise RuntimeError("Error parsing command line. Exactly 3 arguments are required but %d arguments were detected: %s" % (len(args), str(args)))
+        
         if options.optionsFile != None:
             fileArgs = parseOptionsFile(options.optionsFile)
             options, args = parser.parse_args(fileArgs + sys.argv[1:])
             if len(args) != 3:
                 raise RuntimeError("Error parsing options file.  Make sure all "
                                    "options have -- prefix")
+        stage = 0
         setLoggingFromOptions(options)
         seqFile = SeqFile(args[0])
         workDir = args[1]
@@ -331,7 +332,7 @@ def main():
     
     except RuntimeError, e:
         sys.stderr.write("Error: %s\n\n" % str(e))
-        if os.path.isdir(workDir):
+        if stage >= 0 and os.path.isdir(workDir):
             sys.stderr.write("Temporary data was left in: %s\n" % workDir)
         if stage == 1:
             sys.stderr.write("More information can be found in %s\n" %
@@ -339,7 +340,8 @@ def main():
         elif stage == 2:
             sys.stderr.write("More information can be found in %s\n" %
                              os.path.join(workDir, "cactus2hal.log"))
-        cleanKtFn(workDir, options)
+        if stage > 0:
+            cleanKtFn(workDir, options)
         return -1
 
 if __name__ == '__main__':
