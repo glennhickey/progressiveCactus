@@ -14,7 +14,7 @@ kyotoTycoonIncl = -I${kcPrefix}/include -I${ttPrefix}/include -DHAVE_KYOTO_TYCOO
 kyotoTycoonLib = -L${ttPrefix}/lib -Wl,-rpath,${ttPrefix}/lib -lkyototycoon -L${kcPrefix}/lib -Wl,-rpath,${kcPrefix}/lib -lkyotocabinet -lz -lbz2 -lpthread -lm -lstdc++
 
 #DISABLE MYSQUL
-mysqlIncl =
+mysqlIncl = 
 mysqlLibs =
 
 include  ${sonLibRootPath}/include.mk
@@ -33,3 +33,13 @@ h5prefix = -prefix=${h5path}
 
 #environment
 myEnv = $(CURDIR)/../environment
+
+#kyoto tycoon et al have problems with shared libraries on the cluster
+#but shared libraries seem to be necessary to build on osx.
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Darwin)
+ktlinkingflags =
+else
+ktlinkingflags = --enable-static --disable-shared 
+endif

@@ -26,15 +26,15 @@ lastzRule :
 	echo export PATH=$(CURDIR)/lastz/src:$(CURDIR)/lastz/tools:\$$PATH >> ${myEnv}
 
 tokyocabinetRule :
-	cd tokyocabinet &&./configure --prefix=$(CURDIR)/tokyocabinet --enable-static --disable-shared && make && make install
+	cd tokyocabinet &&./configure --prefix=$(CURDIR)/tokyocabinet ${ktlinkingflags} && make && make install
 	echo export PATH=$(CURDIR)/tokyocabinet/bin:\$$PATH >> ${myEnv}
 
 kyotocabinetRule :
-	cd kyotocabinet &&./configure --prefix=$(CURDIR)/kyotocabinet --enable-static --disable-shared && make && make install
+	cd kyotocabinet &&./configure --prefix=$(CURDIR)/kyotocabinet ${ktlinkingflags} && make && make install
 	echo export PATH=$(CURDIR)/kyotocabinet/bin:\$$PATH >> ${myEnv}
 
 kyototycoonRule :
-	cd kyototycoon &&./configure --prefix=$(CURDIR)/kyototycoon --enable-static --disable-shared --with-kc=$(CURDIR)/kyotocabinet && make && make install
+	cd kyototycoon &&./configure --prefix=$(CURDIR)/kyototycoon ${ktlinkingflags} --with-kc=$(CURDIR)/kyotocabinet && make && make install
 	echo export PATH=$(CURDIR)/kyototycoon/bin:\$$PATH >> ${myEnv}
 
 hdf5Rule :
