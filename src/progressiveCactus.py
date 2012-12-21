@@ -172,7 +172,7 @@ def getJobTreeCommands(jtPath, parser, options):
                     getattr(options, opt.dest) != optGroup.defaults[opt.dest]:
                     cmds += " %s" % str(opt)
                     if opt.nargs > 0:
-                        cmds += " %s" % getattr(options, opt.dest)
+                        cmds += " \"%s\"" % getattr(options, opt.dest)
     return cmds
 
 # Go through a text file and add every word inside to an arguments list
