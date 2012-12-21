@@ -13,6 +13,10 @@ ttPrefix =$(CURDIR)/kyototycoon
 kyotoTycoonIncl = -I${kcPrefix}/include -I${ttPrefix}/include -DHAVE_KYOTO_TYCOON=1
 kyotoTycoonLib = -L${ttPrefix}/lib -Wl,-rpath,${ttPrefix}/lib -lkyototycoon -L${kcPrefix}/lib -Wl,-rpath,${kcPrefix}/lib -lkyotocabinet -lz -lbz2 -lpthread -lm -lstdc++
 
+#DISABLE MYSQUL
+mysqlIncl = ""
+mysqlLibs = ""
+
 include  ${sonLibRootPath}/include.mk
 
 dataSetsPath=/Users/benedictpaten/Dropbox/Documents/work/myPapers/genomeCactusPaper/dataSets
