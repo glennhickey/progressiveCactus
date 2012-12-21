@@ -14,8 +14,8 @@ kyotoTycoonIncl = -I${kcPrefix}/include -I${ttPrefix}/include -DHAVE_KYOTO_TYCOO
 kyotoTycoonLib = -L${ttPrefix}/lib -Wl,-rpath,${ttPrefix}/lib -lkyototycoon -L${kcPrefix}/lib -Wl,-rpath,${kcPrefix}/lib -lkyotocabinet -lz -lbz2 -lpthread -lm -lstdc++
 
 #DISABLE MYSQUL
-mysqlIncl = ""
-mysqlLibs = ""
+mysqlIncl =
+mysqlLibs =
 
 include  ${sonLibRootPath}/include.mk
 
