@@ -15,7 +15,7 @@ kyotoTycoonLib = -L${ttPrefix}/lib -Wl,-rpath,${ttPrefix}/lib -lkyototycoon -L${
 
 #DISABLE MYSQUL
 mysqlIncl = 
-mysqlLibs =
+mysqlLibs = -lm
 
 include  ${sonLibRootPath}/include.mk
 
