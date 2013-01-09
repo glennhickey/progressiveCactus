@@ -87,6 +87,11 @@ def initParser():
     parser.add_option("--configFile", dest="configFile",
                       help="Specify cactus configuration file",
                       default=None)
+    parser.add_option("--legacy", dest="legacy", action="store_true", help=
+                      "Run cactus directly on all input sequences "
+                      "without any progressive decomposition (ie how it "
+                      "was originally published in 2011)",
+                      default=False)
 
     #Kyoto Tycoon Options
     ktGroup = OptionGroup(parser, "kyoto_tycoon Options",

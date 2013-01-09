@@ -60,8 +60,12 @@ class ProjectWrapper:
 
     def processConfig(self):
         # read in the default right out of cactus
-        dir = os.path.join(cactusRootPath(), "progressive")
-        configPath = os.path.join(dir, "cactus_progressive_workflow_config.xml")
+        if self.options.configFile is not None:
+            configPath = self.options.configFile
+        else:
+            dir = os.path.join(cactusRootPath(), "progressive")
+            configPath = os.path.join(dir,
+                                      "cactus_progressive_workflow_config.xml")
         configXml = ET.parse(configPath).getroot()
         self.configWrapper = ConfigWrapper(configXml)
         # here we can go through the options and apply some to the config
@@ -70,6 +74,11 @@ class ProjectWrapper:
         if self.options.outputMaf is not None:
             self.configWrapper.setBuildMaf(True)
             self.configWrapper.setJoinMaf(True)
+        # this is a little hack to effectively toggle back to the
+        # non-progressive version of cactus (as published in Gen. Res. 2011)
+        # from the high-level interface. 
+        if self.options.legacy is True:
+            self.configWrapper.setSubtreeSize(sys.maxint)
 
     def processExperiment(self):
         expXml = self.seqFile.toXMLElement()
