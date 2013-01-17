@@ -79,6 +79,7 @@ class SeqFile:
                         raise RuntimeError("Duplicate name found: %s" % name)
                     self.pathMap[name] = path
         self.tree.setName(self.tree.getRootId(), SeqFile.rootName)
+        self.cleanTree()
         self.validate()
 
     def validate(self):
@@ -91,6 +92,33 @@ class SeqFile:
                     path = self.pathMap[name]
                     if not os.path.exists:
                         raise RuntimeError("Sequence path not found: %s" % path)
+
+    # remove leaves that do not have sequence data associated with them
+    def cleanTree(self):
+        numLeaves = 0
+        removeList = []
+        for node in self.tree.postOrderTraversal():
+            if self.tree.isLeaf(node):
+                name = self.tree.getName(node)
+                if name not in self.pathMap:
+                    removeList.append(node)
+                numLeaves += 1
+        if len(removeList) == numLeaves:
+            raise RuntimeError("No sequence path specified for any leaves in the tree")
+        for leaf in removeList:
+             sys.stderr.write("No sequence path found for %s: skipping\n" % (
+                 self.tree.getName(leaf)))
+             self.tree.removeLeaf(leaf)
+
+        for node in self.tree.postOrderTraversal():
+            if self.tree.hasParent(node):
+                parent = self.tree.getParent(node)
+                if self.tree.getWeight(parent, node) is None:
+                    sys.stderr.write(
+                        "No branch length for %s: setting to 1\n" % (
+                            self.tree.getName(node)))
+                    self.tree.setWeight(parent, node, 1)
+                    
 
     # create the cactus_workflow_experiment xml element which serves as
     # the root node of the experiment template file needed by
