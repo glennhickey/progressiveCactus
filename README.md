@@ -24,7 +24,7 @@ In parent directory of where you want Progressive Cactus installed:
     git submodule update --init
     make
 
-It is also convenient to add the location of `progressiveCactus/bin` to your PATH environment variable.
+It is also convenient to add the location of `progressiveCactus/bin` to your PATH environment variable.  Adding the location of `progressiveCactus/submodules/hal/bin` to PATH can also be useful if running HAL tools is desired. 
 
 If any errors occur during the build process, you are unlikely to be able to use the tool.
 
