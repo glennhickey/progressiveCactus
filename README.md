@@ -80,7 +80,7 @@ When running on a cluster, `<workDir>` must be accessible by all nodes.
 
 **`<outputHalFile>`**
 
-Location of the output alignment in HAL (Hierarchical ALignment) format.  This is a compressed file that can be accessed via the HAL Tools.  (linke to HAL manual here)
+Location of the output alignment in HAL (Hierarchical ALignment) format.  This is a compressed file that can be accessed via the [HAL Tools](https://github.com/glennhickey/hal/blob/master/README.md)
 
 #### General Options
 
@@ -95,10 +95,6 @@ Create a MAF version of the multiple alignment in the desired location in additi
 **`--database=DATABASE`**
 
 Select the type of database from either `tokyo_cabinet` or `kyoto_tycoon` (see below).  `kyoto_tycoon` is necessary to obtain speedup from most types of parallelism and therefore recommended for larger alignments.  
-
-**`--configFile=CONFIGFILE`**
-
-Specify xml file containing configuration parameters.  The default file can be found in `submodules/cactus/progressive/cactus_progressive_workflow_config.xml`.  For experts only.
 
 **`--legacy`**
 
