@@ -48,6 +48,7 @@ from sonLib.nxnewick import NXNewick
 # cat /tmp/cat/
 class SeqFile:
     rootName = 'ProgressiveCactusRoot'
+    branchLen = 1
     def __init__(self, path=None):
         if path is not None:
             self.parseFile(path)
@@ -59,30 +60,49 @@ class SeqFile:
         self.pathMap = dict()
         seqFile = open(path, "r")
         for l in seqFile:
-            line = l.rstrip()
+            line = l.strip()
             if line:
-                if self.tree is None:
+                if line[0] == "#":
+                    continue
+                tokens = line.split()
+                if self.tree is None and (len(tokens) == 1 or line[0] == '('):
                     newickParser = NXNewick()
                     try:
                         self.tree = newickParser.parseString(line)
                     except:
                         raise RuntimeError("Failed to parse newick tree: %s" %
                                            line)
-                else:
-                    tokens = line.split()
-                    if len(tokens) < 2:
-                        raise RuntimeError("Failed to parse name path pair: %s"
-                                           % line)
+                elif line[0] != '(' and len(tokens) >= 2:
                     name = tokens[0]
                     path = string.join(tokens[1:])
                     if name in self.pathMap:
                         raise RuntimeError("Duplicate name found: %s" % name)
                     self.pathMap[name] = path
+                elif len(tokens) > 0:
+                    sys.stderr.write("Skipping line %s\n" % l)
+        
+        if self.tree is None:
+            self.starTree()
         self.tree.setName(self.tree.getRootId(), SeqFile.rootName)
         self.cleanTree()
         self.validate()
 
+    def starTree(self):
+        self.tree = NXTree()
+        label = 0
+        self.tree.nxDg.add_node(label)
+        self.tree.rootId = label
+        self.tree.setName(label, SeqFile.rootName)
+        for name in self.pathMap.keys():
+            label += 1
+            self.tree.nxDg.add_edge(0, label)
+            self.tree.setName(label, name)
+            self.tree.setWeight(0, label, SeqFile.branchLen)
+        
     def validate(self):
+        if len([i for i in self.tree.postOrderTraversal()]) <= 2:
+            raise RuntimeError("At least two valid leaf genomes required in"
+                               " input tree")
         for node in self.tree.postOrderTraversal():
             if self.tree.isLeaf(node):
                 name = self.tree.getName(node)
@@ -103,6 +123,9 @@ class SeqFile:
                 if name not in self.pathMap:
                     removeList.append(node)
                 numLeaves += 1
+        if numLeaves < 2:
+            raise RuntimeError("At least two valid leaf genomes required in"
+                               " input tree")
         if len(removeList) == numLeaves:
             raise RuntimeError("No sequence path specified for any leaves in the tree")
         for leaf in removeList:
@@ -115,9 +138,9 @@ class SeqFile:
                 parent = self.tree.getParent(node)
                 if self.tree.getWeight(parent, node) is None:
                     sys.stderr.write(
-                        "No branch length for %s: setting to 1\n" % (
-                            self.tree.getName(node)))
-                    self.tree.setWeight(parent, node, 1)
+                        "No branch length for %s: setting to %d\n" % (
+                            self.tree.getName(node), SeqFile.branchLen))
+                    self.tree.setWeight(parent, node, SeqFile.branchLen)
                     
 
     # create the cactus_workflow_experiment xml element which serves as

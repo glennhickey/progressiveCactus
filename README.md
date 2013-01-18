@@ -26,6 +26,8 @@ In parent directory of where you want Progressive Cactus installed:
 
 It is also convenient to add the location of `progressiveCactus/bin` to your PATH environment variable.
 
+If any errors occur during the build process, you are unlikely to be able to use the tool.
+
 *Note that all dependencies are also built and included in the submodules/ directory.  This increases the size and build time but greatly simplifies installation and version management.  The installation does not create or modify any files outside the progressiveCactus/ directory. *  
 
 Running the aligner
@@ -43,23 +45,27 @@ Usage: `runProgressiveCactus.sh [options] <seqFile> <workDir> <outputHalFile>`
 
 **`<seqFile>`**   
 
-Text file containing the locations of the input sequences as well as their phylogenetic tree.  The file is formatted as follows:
+Text file containing the locations of the input sequences as well as their phylogenetic tree.  The tree will be used to progressively decompose the alignment by iteratively aligning sibling genomes to estimate their parents in a bottom-up fashion. If the tree is not specified, then a star-tree will be assumed (a single root with all leaves connected to it) and all genomes will be aligned together at once.  The file is formatted as follows:
 
-    NEWICK tree
+    NEWICK tree (optional)
     name1 path1
     name2 path2
     ...
     nameN nameN
 
-* The tree must be on a single line.  All leaves must be labeled and these labels must be unique.  Labels should not contain any spaces.  
-* There must be a single line mapping each leaf label in the tree to its sequence path.
+* The tree, if specified, must be on a single line.  All leaves must be labeled and these labels must be unique.  Labels should not contain any spaces.
+* Branch lengths that are not specified are assumed to be 1
+* Lines beginning with # are ignored. 
 * Sequence paths must point to either a FASTA file or a directory containing 1 or more FASTA files.
 * Sequence paths must not contain spaces.
+* Sequence paths that are not referred to in the tree are ignored
+* Leaves in the tree that are not mapped to a path are ignored
 * Each name / path pair must be on its own line
 * Paths must be absolute
 
 Example:
      
+	  # Sequence data for progressive alignment of 4 genomes
      (((human:0.006,chimp:0.006667):0.0022,gorilla:0.008825):0.0096,orang:0.01831);
      human /data/genomes/human/human.fa
      chimp /data/genomes/chimp/
@@ -85,6 +91,18 @@ Location of progressive cactus configuration file in XML format.  The default co
 **`--outputMaf=OUTPUTMAF`**
 
 Create a MAF version of the multiple alignment in the desired location in addition to the HAL file.  This option may drastically increase the space, time and memory required to perform the alignment.  This option will become increasingly unneeded as the HAL Tools MAF exporter becomes more robust.  
+
+**`--database=DATABASE`**
+
+Select the type of database from either `tokyo_cabinet` or `kyoto_tycoon` (see below).  `kyoto_tycoon` is necessary to obtain speedup from most types of parallelism and therefore recommended for larger alignments.  
+
+**`--configFile=CONFIGFILE`**
+
+Specify xml file containing configuration parameters.  The default file can be found in `submodules/cactus/progressive/cactus_progressive_workflow_config.xml`.  For experts only.
+
+**`--legacy`**
+
+Align all genomes at once.   This consistent with the original version of Cactus that this package was designed to replace. 
 
 ### Database Options
 
@@ -134,9 +152,7 @@ Align the small Blanchette alignment
 HAL Tools
 -----
 
-(to do)
-
-[HAL Manual](HAL_README.md)
+Please see the [HAL Manual](https://github.com/glennhickey/hal/blob/master/README.md).  Note that all binaries are found in `progressiveCactus/submodules/hal/bin`
 
 Credits
 ------
