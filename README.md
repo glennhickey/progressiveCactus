@@ -90,7 +90,7 @@ Location of progressive cactus configuration file in XML format.  The default co
 
 **`--outputMaf=OUTPUTMAF`**
 
-Create a MAF version of the multiple alignment in the desired location in addition to the HAL file.  This option may drastically increase the space, time and memory required to perform the alignment.  This option will become increasingly unneeded as the HAL Tools MAF exporter becomes more robust.  
+Create a MAF version of the multiple alignment in the desired location in addition to the HAL file.  This option may drastically increase the space, time and memory required to perform a progressive alignment: Consider using `progressiveCactus /submodules/hal/hal2maf` on the output hal file instead. 
 
 **`--database=DATABASE`**
 
