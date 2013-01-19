@@ -10,6 +10,8 @@ modules = ${external} ${ucsc}
 
 all : envRefreshRule virtPyRule lastzRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule datasets ${ucsc:%=ucsc.%}
 
+justUCSC : ${ucsc:%=ucsc.%}
+
 envRefreshRule:
 	rm -f ${myEnv}
 
@@ -51,6 +53,11 @@ ucsc.%:
 clean: lastzClean cabinetClean hdf5Clean ${ucsc:%=clean.%}
 
 clean.%:
+	cd $* && make clean
+
+justUCSCClean: ${ucsc:%=justUCSCClean.%}
+
+justUCSCClean.%:
 	cd $* && make clean
 
 lastzClean:

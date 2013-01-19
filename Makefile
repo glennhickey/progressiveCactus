@@ -22,3 +22,9 @@ test: ${modules:%=test.%}
 
 test.%:
 	cd $* && make test
+
+ucsc:
+	cd submodules && make justUCSC
+
+ucscClean:
+	cd submodules && make justUCSCClean
