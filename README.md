@@ -15,6 +15,13 @@ Installation
 * Parasol or SGE (for cluster support)
 * 750M disk space
 
+### Dependencies
+
+These libraries must be installed in order for some of the third party packages included in this release to compile:
+
+* [bzip2](http://www.bzip.org/)
+* [zlib](http://www.zlib.net/)
+
 ### Instructions
 In parent directory of where you want Progressive Cactus installed:
 
