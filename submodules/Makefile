@@ -55,7 +55,7 @@ kyototycoonRule :
 	echo export PATH=$(CURDIR)/kyototycoon/bin:\$$PATH >> ${myEnv}
 
 hdf5Rule :
-#cd hdf5 &&./configure --prefix=$(CURDIR)/hdf5 --enable-cxx && make && make install
+	cd hdf5 &&./configure --prefix=$(CURDIR)/hdf5 --enable-cxx && make && make install
 	echo export PATH=$(CURDIR)/hdf5/bin:\$$PATH >> ${myEnv}
 
 
