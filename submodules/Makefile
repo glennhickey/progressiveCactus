@@ -1,14 +1,14 @@
 include include.mk
 
-external = tokyocabinet kyotocabinet kyototycoon lastz hdf5
+external = tokyocabinet kyotocabinet kyototycoon lastz hdf5 pbs-drmaa
 ucsc = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal mafJoin
 
 modules = ${external} ${ucsc}
 #modules = ${ucsc}
 
-.PHONY: all %.all clean %.clean envRereshRule virtPyRule lastzRule tokyocabinetRule kyotocabinetRule hdf5Rule lastzClean cabinetClean hdf5Clean test %.test datasets
+.PHONY: all %.all clean %.clean envRereshRule virtPyRule lastzRule tokyocabinetRule kyotocabinetRule pbsDrmaaRule drmaaPythonRule hdf5Rule lastzClean cabinetClean hdf5Clean pbsDrmaaClean test %.test datasets
 
-all : envRefreshRule virtPyRule lastzRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule datasets ${ucsc:%=ucsc.%}
+all : envRefreshRule virtPyRule lastzRule tokyocabinetRule kyotocabinetRule kyototycoonRule pbsDrmaaRule drmaaPythonRule hdf5Rule datasets ${ucsc:%=ucsc.%}
 
 justUCSC : ${ucsc:%=ucsc.%}
 
@@ -22,6 +22,21 @@ virtPyRule :
 	cp ${virtPyEnv} ${myEnv}
 	echo export PYTHONPATH=$(CURDIR):\$$PYTHONPATH >> ${myEnv}
 	echo export PATH=${virtPyDir}/bin:\$$PATH >> ${myEnv}
+
+ifeq ($(enablePBSTorque), yes)
+pbsDrmaaRule :
+	cd pbs-drmaa &&./configure --prefix=$(CURDIR)/pbs-drmaa && make && make install
+	echo export DRMAA_LIBRARY_PATH=$(CURDIR)/pbs-drmaa/lib/libdrmaa.so >> ${myEnv}
+
+drmaaPythonRule :
+	. ${virtPyEnv} && cd $(CURDIR)/drmaa-python/ && ${virtPy} setup.py install
+else
+pbsDrmaaRule :
+	cd .
+
+drmaaPythonRule :
+	cd . 
+endif
 
 lastzRule :
 	cd lastz && make
@@ -40,8 +55,9 @@ kyototycoonRule :
 	echo export PATH=$(CURDIR)/kyototycoon/bin:\$$PATH >> ${myEnv}
 
 hdf5Rule :
-	cd hdf5 &&./configure --prefix=$(CURDIR)/hdf5 --enable-cxx && make && make install
+#cd hdf5 &&./configure --prefix=$(CURDIR)/hdf5 --enable-cxx && make && make install
 	echo export PATH=$(CURDIR)/hdf5/bin:\$$PATH >> ${myEnv}
+
 
 # Important to export environment to override sonlib/include.mk
 export
@@ -50,7 +66,7 @@ ucsc.%:
 	cd $* && make
 	echo export PATH=$(CURDIR)/$*/bin:\$$PATH >> ${myEnv}
 
-clean: lastzClean cabinetClean hdf5Clean ${ucsc:%=clean.%}
+clean: lastzClean cabinetClean hdf5Clean pbsDrmaaClean ${ucsc:%=clean.%}
 
 clean.%:
 	cd $* && make clean
@@ -65,6 +81,9 @@ lastzClean:
 
 cabinetClean:
 	rm -f $(CURDIR)/tokyocabinet/lib/*.a $(CURDIR)/kyotocabinet/lib/*.a  $(CURDIR)/kyototycoon/lib/*.a
+
+pbsDrmaaClean:
+	cd pbs-drmaa && make clean
 
 hdf5Clean:
 	cd hdf5 && make clean

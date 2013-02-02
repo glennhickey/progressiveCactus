@@ -49,3 +49,9 @@
 [submodule "submodules/cactusTestData"]
 	path = submodules/cactusTestData
 	url = git://github.com/UCSCReconGroup/cactusTestData.git
+[submodule "submodules/pbs-drmaa"]
+	path = submodules/pbs-drmaa
+	url = git://github.com/UCSCReconGroup/pbs-drmaa
+[submodule "submodules/drmaa-python"]
+	path = submodules/drmaa-python
+	url = git://github.com/UCSCReconGroup/drmaa-python

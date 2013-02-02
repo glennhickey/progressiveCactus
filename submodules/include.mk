@@ -43,3 +43,11 @@ ktlinkingflags =
 else
 ktlinkingflags = --enable-static --disable-shared 
 endif
+
+
+#toggle support for PBS Torque batch system by changing value of
+#enablePBSTorque between no and yes
+# Torque must be installed for cactus to build with this enabled
+
+enablePBSTorque = no
+#enablePBSTorque = yes
