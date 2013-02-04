@@ -22,6 +22,10 @@ These libraries must be installed in order for some of the third party packages 
 * [bzip2](http://www.bzip.org/)
 * [zlib](http://www.zlib.net/)
 
+### PBS/Torque Cluster Support
+
+In order to run on clusters with the PBS / Torque resource manager, change the `enablePBSTorque` variable at the bottom of the `submodules/include.mk` file from `no` to `yes` before running make in the instructions below (*functionality is still being tested and developed*)
+
 ### Instructions
 In parent directory of where you want Progressive Cactus installed:
 
@@ -178,6 +182,8 @@ These packages are linked to via their github locations (or our mirror if they w
 * [Kyoto Cabinet](http://fallabs.com/kyotocabinet/)
 * [HDF5](http://www.hdfgroup.org/HDF5/)
 * [lastz](http://www.bx.psu.edu/~rsharris/lastz/)
+* [pbs-drmaa](http://sourceforge.net/projects/pbspro-drmaa/)
+* [drmaa-python](http://code.google.com/p/drmaa-python/)
 
 We thank all the authors of the above for sharing their high quality free software with the community.  
 
