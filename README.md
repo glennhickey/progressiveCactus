@@ -12,7 +12,7 @@ Installation
 * gcc 4.2 or newer
 * python 2.7
 * 64bit processor and build environment
-* Parasol or SGE (for cluster support)
+* Parasol or SGE or Torque (see below) for cluster support.
 * 750M disk space
 
 ### Dependencies
@@ -27,7 +27,7 @@ These libraries must be installed in order for some of the third party packages 
 In order to run on clusters with the PBS / Torque resource manager, change the `enablePBSTorque` variable at the bottom of the `submodules/include.mk` file from `no` to `yes` before running make in the instructions below (*functionality is still being tested and developed*)
 
 ### Instructions
-In parent directory of where you want Progressive Cactus installed:
+In the parent directory of where you want Progressive Cactus installed:
 
     git clone git://github.com/glennhickey/progressiveCactus.git
     cd progressiveCactus
