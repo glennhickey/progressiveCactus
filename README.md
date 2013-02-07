@@ -17,7 +17,7 @@ Installation
 
 ### Dependencies
 
-These libraries must be installed in order for some of the third party packages included in this release to compile:
+These common libraries found on most systems must be installed in order for some of the third party packages included in this release to compile:
 
 * [bzip2](http://www.bzip.org/)
 * [zlib](http://www.zlib.net/)
@@ -35,7 +35,7 @@ In the parent directory of where you want Progressive Cactus installed:
     git submodule update --init
     make
 
-It is also convenient to add the location of `progressiveCactus/bin` to your PATH environment variable.  Adding the location of `progressiveCactus/submodules/hal/bin` to PATH can also be useful if running HAL tools is desired. 
+It is also convenient to add the location of `progressiveCactus/bin` to your PATH environment variable.  In order to run the included tools (ex hal2maf) in the submodules/ directory structure, first source `progressiveCactus/environment` to load the installed environment.
 
 If any errors occur during the build process, you are unlikely to be able to use the tool.
 
