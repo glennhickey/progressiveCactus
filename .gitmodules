@@ -58,6 +58,3 @@
 [submodule "submodules/zlib"]
 	path = submodules/zlib
 	url = git://github.com/madler/zlib
-[submodule "submodules/bzip2"]
-	path = submodules/bzip2
-	url = git://github.com/VFR-maniac/bzip2.git
