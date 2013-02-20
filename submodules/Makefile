@@ -61,6 +61,7 @@ kyotocabinetRule :
 
 kyototycoonRule :
 	cd kyototycoon &&./configure --prefix=$(CURDIR)/kyototycoon ${ktlinkingflags} --with-kc=$(CURDIR)/kyotocabinet && make && make install
+	echo export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) >> ${myEnv}
 	echo export PATH=$(CURDIR)/kyototycoon/bin:\$$PATH >> ${myEnv}
 
 hdf5Rule :
@@ -75,7 +76,7 @@ ucsc.%:
 	cd $* && make
 	echo export PATH=$(CURDIR)/$*/bin:\$$PATH >> ${myEnv}
 
-clean: lastzClean cabinetClean hdf5Clean pbsDrmaaClean ${ucsc:%=clean.%}
+clean: lastzClean cabinetClean hdf5Clean pbsDrmaaClean zlibClean bzip2Clean ${ucsc:%=clean.%}
 
 clean.%:
 	cd $* && make clean
@@ -95,6 +96,7 @@ lastzClean:
 	cd lastz && make clean
 
 cabinetClean:
+	cd kyotocabi
 	rm -f $(CURDIR)/tokyocabinet/lib/*.a $(CURDIR)/kyotocabinet/lib/*.a  $(CURDIR)/kyototycoon/lib/*.a
 
 pbsDrmaaClean:

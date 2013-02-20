@@ -36,9 +36,9 @@ myEnv = $(CURDIR)/../environment
 
 #kyoto tycoon et al have problems with shared libraries on the cluster
 #but shared libraries seem to be necessary to build on osx.
-LDFLAGS = -L$(CURDIR)/zlib/lib -L$(CURDIR)/bzip2/lib -L$(CURDIR)/bzip2/ -L$(CURDIR)/kyotocabinet/lib
-CXXFLAGS = $(cppflags)
-
+LDFLAGS := -L$(CURDIR)/zlib/lib -L$(CURDIR)/bzip2/lib -L$(CURDIR)/bzip2/ -L$(CURDIR)/kyotocabinet/lib $(LDFLAGS)
+CXXFLAGS := $(cppflags) $(CXXFLAGS)
+LD_LIBRARY_PATH := $(CURDIR)/zlib/lib:$(CURDIR)/bzip2/lib:$(CURDIR)/bzip2/:$(CURDIR)/kyotocabinet/lib:$(CURDIR)/kyototycoon/lib:$(LD_LIBRARY_PATH)
 #UNAME := $(shell uname)
 #ifeq ($(UNAME), Darwin)
 ktlinkingflags =
