@@ -47,9 +47,9 @@ zlibRule :
 	echo export PATH=$(CURDIR)/zlib/bin:\$$PATH >> ${myEnv}
 
 bzip2Rule :
-	cd bzip2 && make && make install PREFIX=$(CURDIR)/bzip2
+#	cd bzip2 && make && make install PREFIX=$(CURDIR)/bzip2
 	cd bzip2 && make clean && make -f Makefile-libbz2_so PREFIX=$(CURDIR)/bzip2
-	echo export PATH=$(CURDIR)/bzip2/bin:\$$PATH >> ${myEnv}
+#	echo export PATH=$(CURDIR)/bzip2/bin:\$$PATH >> ${myEnv}
 
 tokyocabinetRule :
 	cd tokyocabinet &&./configure --prefix=$(CURDIR)/tokyocabinet ${ktlinkingflags} && make && make install

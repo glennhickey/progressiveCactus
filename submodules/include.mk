@@ -10,8 +10,8 @@ tokyoCabinetLib = -L${tcPrefix}/lib -Wl,-rpath,${tcPrefix}/lib -ltokyocabinet -l
 
 kcPrefix =$(CURDIR)/kyotocabinet
 ttPrefix =$(CURDIR)/kyototycoon
-kyotoTycoonIncl = -I${kcPrefix}/include -I${ttPrefix}/include -DHAVE_KYOTO_TYCOON=1 -I$(CURDIR)/zlib/include -I$(CURDIR)/bzip2/include 
-kyotoTycoonLib = -L$(CURDIR)/zlib/lib -L$(CURDIR)/bzip2/lib -L$(CURDIR)/bzip2/ -L${ttPrefix}/lib -Wl,-rpath,${ttPrefix}/lib -lkyototycoon -L${kcPrefix}/lib -Wl,-rpath,${kcPrefix}/lib -lkyotocabinet -Wl,-rpath,$(CURDIR)/zlib/lib -lz -Wl,-rpath,$(CURDIR)/bzip2/lib -Wl,-rpath,$(CURDIR)/bzip2 -lbz2 -lpthread -lm -lstdc++
+kyotoTycoonIncl = -I${kcPrefix}/include -I${ttPrefix}/include -DHAVE_KYOTO_TYCOON=1 -I$(CURDIR)/zlib/include -I$(CURDIR)/bzip2/ 
+kyotoTycoonLib = -L$(CURDIR)/zlib/lib -L$(CURDIR)/bzip2/ -L${ttPrefix}/lib -Wl,-rpath,${ttPrefix}/lib -lkyototycoon -L${kcPrefix}/lib -Wl,-rpath,${kcPrefix}/lib -lkyotocabinet -Wl,-rpath,$(CURDIR)/zlib/lib -lz -Wl,-rpath,$(CURDIR)/bzip2 -lbz2 -lpthread -lm -lstdc++
 
 #DISABLE MYSQUL
 mysqlIncl = 
@@ -36,9 +36,9 @@ myEnv = $(CURDIR)/../environment
 
 #kyoto tycoon et al have problems with shared libraries on the cluster
 #but shared libraries seem to be necessary to build on osx.
-LDFLAGS := -L$(CURDIR)/zlib/lib -L$(CURDIR)/bzip2/lib -L$(CURDIR)/bzip2/ -L$(CURDIR)/kyotocabinet/lib $(LDFLAGS)
+LDFLAGS := -L$(CURDIR)/zlib/lib -L$(CURDIR)/bzip2/ -L$(CURDIR)/kyotocabinet/lib $(LDFLAGS)
 CXXFLAGS := $(cppflags) $(CXXFLAGS)
-LD_LIBRARY_PATH := $(CURDIR)/zlib/lib:$(CURDIR)/bzip2/lib:$(CURDIR)/bzip2/:$(CURDIR)/kyotocabinet/lib:$(CURDIR)/kyototycoon/lib:$(LD_LIBRARY_PATH)
+LD_LIBRARY_PATH := $(CURDIR)/zlib/lib:$(CURDIR)/bzip2/:$(CURDIR)/kyotocabinet/lib:$(CURDIR)/kyototycoon/lib:$(LD_LIBRARY_PATH)
 #UNAME := $(shell uname)
 #ifeq ($(UNAME), Darwin)
 ktlinkingflags =
