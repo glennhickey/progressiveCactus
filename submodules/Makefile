@@ -96,7 +96,8 @@ lastzClean:
 	cd lastz && make clean
 
 cabinetClean:
-	cd kyotocabi
+	cd kyotocabinet && make clean
+	cd kyototycoon && make clean
 	rm -f $(CURDIR)/tokyocabinet/lib/*.a $(CURDIR)/kyotocabinet/lib/*.a  $(CURDIR)/kyototycoon/lib/*.a
 
 pbsDrmaaClean:
