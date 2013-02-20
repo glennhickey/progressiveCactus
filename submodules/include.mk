@@ -11,7 +11,7 @@ tokyoCabinetLib = -L${tcPrefix}/lib -Wl,-rpath,${tcPrefix}/lib -ltokyocabinet -l
 kcPrefix =$(CURDIR)/kyotocabinet
 ttPrefix =$(CURDIR)/kyototycoon
 kyotoTycoonIncl = -I${kcPrefix}/include -I${ttPrefix}/include -DHAVE_KYOTO_TYCOON=1 -I$(CURDIR)/zlib/include -I$(CURDIR)/bzip2/include 
-kyotoTycoonLib = -L$(CURDIR)/zlib/lib -L$(CURDIR)/bzip2/lib -L${ttPrefix}/lib -Wl,-rpath,${ttPrefix}/lib -lkyototycoon -L${kcPrefix}/lib -Wl,-rpath,${kcPrefix}/lib -lkyotocabinet -Wl,-rpath,$(CURDIR)/zlib/lib -lz -Wl,-rpath,$(CURDIR)/bzip2/lib -lbz2 -lpthread -lm -lstdc++
+kyotoTycoonLib = -L$(CURDIR)/zlib/lib -L$(CURDIR)/bzip2/lib -L$(CURDIR)/bzip2/ -L${ttPrefix}/lib -Wl,-rpath,${ttPrefix}/lib -lkyototycoon -L${kcPrefix}/lib -Wl,-rpath,${kcPrefix}/lib -lkyotocabinet -Wl,-rpath,$(CURDIR)/zlib/lib -lz -Wl,-rpath,$(CURDIR)/bzip2/lib -Wl,-rpath,$(CURDIR)/bzip2 -lbz2 -lpthread -lm -lstdc++
 
 #DISABLE MYSQUL
 mysqlIncl = 
@@ -36,15 +36,15 @@ myEnv = $(CURDIR)/../environment
 
 #kyoto tycoon et al have problems with shared libraries on the cluster
 #but shared libraries seem to be necessary to build on osx.
-LDFLAGS = -L$(CURDIR)/zlib/lib -L$(CURDIR)/bzip2/lib -L$(CURDIR)/kyotocabinet/lib
+LDFLAGS = -L$(CURDIR)/zlib/lib -L$(CURDIR)/bzip2/lib -L$(CURDIR)/bzip2/ -L$(CURDIR)/kyotocabinet/lib
 CXXFLAGS = $(cppflags)
-UNAME := $(shell uname)
 
-ifeq ($(UNAME), Darwin)
+#UNAME := $(shell uname)
+#ifeq ($(UNAME), Darwin)
 ktlinkingflags =
-else
-ktlinkingflags = --enable-static --disable-shared 
-endif
+#else
+#ktlinkingflags = --enable-static --disable-shared 
+#endif
 
 
 #toggle support for PBS Torque batch system by changing value of
