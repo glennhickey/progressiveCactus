@@ -15,13 +15,6 @@ Installation
 * Parasol or SGE or Torque (see below) for cluster support.
 * 750M disk space
 
-### Dependencies
-
-These common libraries found on most systems must be installed in order for some of the third party packages included in this release to compile:
-
-* [bzip2](http://www.bzip.org/)
-* [zlib](http://www.zlib.net/)
-
 ### PBS/Torque Cluster Support
 
 In order to run on clusters with the PBS / Torque resource manager, change the `enablePBSTorque` variable at the bottom of the `submodules/include.mk` file from `no` to `yes` before running make in the instructions below (*functionality is still being tested and developed*)
@@ -177,6 +170,8 @@ These packages are linked to via their github locations (or our mirror if they w
 * [Virtual Env](http://www.virtualenv.org/en/latest/index.html)
 * [networkx](http://networkx.lanl.gov/)
 * [psutil](http://code.google.com/p/psutil/)
+* [bzip2](http://www.bzip.org/)
+* [zlib](http://www.zlib.net/)
 * [Kyoto Tycoon](http://fallabs.com/kyototycoon/)
 * [Tokyo Cabinet](http://fallabs.com/tokyocabinet/)
 * [Kyoto Cabinet](http://fallabs.com/kyotocabinet/)
