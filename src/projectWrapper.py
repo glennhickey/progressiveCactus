@@ -129,8 +129,12 @@ class ProjectWrapper:
                                 ProjectWrapper.alignmentDirName)
         if os.path.exists(projPath):
             system("rm -rf %s" % projPath)
-
-        system("cactus_createMultiCactusProject.py %s %s" % (expPath, projPath))
+        if self.options.outputMaf is True:
+            fixNames=1
+        else:
+            fixNames=0
+        system("cactus_createMultiCactusProject.py %s %s --fixNames=%d" % (
+            expPath, projPath, fixNames))
         
         
         
