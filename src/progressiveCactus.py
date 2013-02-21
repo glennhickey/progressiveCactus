@@ -82,7 +82,7 @@ def initParser():
                       " [default: %default]",
                       default="tokyo_cabinet")
     parser.add_option("--outputMaf", dest="outputMaf",
-                      help="Path of output alignment in .maf format.",
+                      help="[DEPRECATED use hal2maf on the ouput file instead] Path of output alignment in .maf format.  This option should be avoided and will soon be removed.  It may cause sequence names to be mangled, and use a tremendous amount of memory. ",
                       default=None)
     parser.add_option("--configFile", dest="configFile",
                       help="Specify cactus configuration file",
