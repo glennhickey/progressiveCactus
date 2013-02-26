@@ -92,7 +92,6 @@ class ProjectWrapper:
         self.expWrapper = ExperimentWrapper(expXml)
 
         if self.options.database == "kyoto_tycoon":
-            self.expWrapper.setDbHost(str(self.options.ktHost))
             self.expWrapper.setDbPort(str(self.options.ktPort))
             if self.options.ktType == 'memory':
                 self.expWrapper.setDbInMemory(True)

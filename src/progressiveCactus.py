@@ -42,7 +42,6 @@ from sonLib.bioio import popenCatch
 from jobTree.scriptTree.target import Target 
 from jobTree.scriptTree.stack import Stack
 
-from cactus.progressive.ktserverLauncher import KtserverLauncher
 from cactus.progressive.multiCactusProject import MultiCactusProject
 from cactus.progressive.experimentWrapper import ExperimentWrapper
 from cactus.progressive.configWrapper import ConfigWrapper
@@ -80,7 +79,7 @@ def initParser():
     parser.add_option("--database", dest="database",
                       help="Database type: tokyo_cabinet or kyoto_tycoon"
                       " [default: %default]",
-                      default="tokyo_cabinet")
+                      default="kyoto_tycoon")
     parser.add_option("--outputMaf", dest="outputMaf",
                       help="[DEPRECATED use hal2maf on the ouput file instead] Path of output alignment in .maf format.  This option should be avoided and will soon be removed.  It may cause sequence names to be mangled, and use a tremendous amount of memory. ",
                       default=None)
@@ -98,10 +97,6 @@ def initParser():
                           "Kyoto tycoon provides a client/server framework "
                           "for large in-memory hash tables and is available "
                           "via the --database option.")
-    ktGroup.add_option("--ktHost", dest="ktHost",
-                       help="host to specifiy for ktserver"
-                       " [default: %default]",
-                       default=socket.gethostname())
     ktGroup.add_option("--ktPort", dest="ktPort",
                        help="starting port (lower bound of range) of ktservers"
                        " [default: %default]",
@@ -255,36 +250,6 @@ def extractOutput(workDir, outputHalFile, options):
                                                  outputHalFile, logFile)
     system(cmd)
 
-# Trailing ktservers are constant source of aggravation.  If an error
-# occurs during the alignment, we traverse the progressive alignment in
-# the working dir and attempt to kill the server for each subtree.
-# There is an option, dontCleanKtservers, to prevent this since they
-# are frequently useful for debugging.
-# Note workDir and options are added to cleanKtServers() as closure
-# arguments to abide by signal interface
-def cleanKtServersCallback(workDir, options):
-    def cleanKtServers(signal, frame):
-        try:
-            if options.database == "kyoto_tycoon" and\
-                   options.dontCleanKtservers == False:
-                pjPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
-                                      '%s_project.xml' %
-                                      ProjectWrapper.alignmentDirName)
-                mcProj = MultiCactusProject()
-                mcProj.readXML(pjPath)
-                sys.stderr.write("Attempting to clean any trailing ktservers.."
-                                 " (please be patient)\n\n")
-                for node,expPath in mcProj.expMap.items():
-                    try:
-                        exp = ExperimentWrapper(ET.parse(expPath).getroot())
-                        ktserver = KtserverLauncher()
-                        ktserver.killServer(exp)
-                    except:
-                        pass
-        except:
-            pass
-    return cleanKtServers
-
 def main():
     # init as dummy function
     cleanKtFn = lambda x,y:x
@@ -311,9 +276,6 @@ def main():
         workDir = args[1]
         outputHalFile = args[2]
         validateInput(workDir, outputHalFile, options)
-
-        cleanKtFn = cleanKtServersCallback(workDir, options)
-        signal.signal(signal.SIGINT, cleanKtFn)
 
         jtPath = os.path.join(workDir, "jobTree")
         stage = 1
@@ -352,8 +314,6 @@ def main():
         elif stage == 2:
             sys.stderr.write("More information can be found in %s\n" %
                              os.path.join(workDir, "cactus2hal.log"))
-        if stage > 0:
-            cleanKtFn(workDir, options)
         return -1
 
 if __name__ == '__main__':

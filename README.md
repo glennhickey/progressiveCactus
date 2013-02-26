@@ -98,7 +98,7 @@ Create a MAF version of the multiple alignment in the desired location in additi
 
 **`--database=DATABASE`**
 
-Select the type of database from either `tokyo_cabinet` or `kyoto_tycoon` (see below).  `kyoto_tycoon` is necessary to obtain speedup from most types of parallelism and therefore recommended for larger alignments.  
+Select the type of database from either `tokyo_cabinet` or `kyoto_tycoon` (see below).  `kyoto_tycoon` is necessary to obtain speedup from most types of parallelism and therefore recommended for larger alignments.  `tokyo_cabinet` is simpler as no server processes are created but is only useful for testing the basic installation on small examples.
 
 **`--legacy`**
 
@@ -114,7 +114,7 @@ This is the default and simplest option.  The cactus graphs are stored on disk (
 
 ####Kyoto Tycoon
 
-Available with the `--database kyoto_tycoon` command line option.  Kyoto Tycoon databases are kept *in memory* and are accessed via a client-server model.  Both parallel reads and writes are supported.   It is best to leave all the Kyoto Tycoon-related options (`--kt*`) alone unless you are an expert.  
+Available by default (orwith the `--database kyoto_tycoon`) command line option.  Kyoto Tycoon databases are kept *in memory* and are accessed via a client-server model.  Both parallel reads and writes are supported.   It is best to leave all the Kyoto Tycoon-related options (`--kt*`) alone unless you are an expert.  
 
 *The scripts do their best to clean them up, but it is possible that trailing ktserver daemons linger after certain crash situations.  One way to clear them all is:*   `ps x | grep ktserver | grep -v grep | awk '{print $1}' | xargs kill -KILL`
 
