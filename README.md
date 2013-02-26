@@ -116,7 +116,7 @@ This is the default and simplest option.  The cactus graphs are stored on disk (
 
 Available by default (orwith the `--database kyoto_tycoon`) command line option.  Kyoto Tycoon databases are kept *in memory* and are accessed via a client-server model.  Both parallel reads and writes are supported.   It is best to leave all the Kyoto Tycoon-related options (`--kt*`) alone unless you are an expert.  
 
-*The scripts do their best to clean them up, but it is possible that trailing ktserver daemons linger after certain crash situations.  One way to clear them all is:*   `ps x | grep ktserver | grep -v grep | awk '{print $1}' | xargs kill -KILL`
+*The scripts do their best to clean them up, but it is possible that trailing ktserver daemons linger after certain crash situations.  One way to clear them is to delete the contents of `workdDir/jobTree`
 
 ### JobTree Options and Running on the Cluster
 
