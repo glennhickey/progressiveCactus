@@ -153,7 +153,7 @@ class JobStatusMonitor(Thread):
                self.sameKtserversTime > self.deadlockTime:
                 hangTime = min(self.sameJobsTime, self.sameKtserversTime)
                 failedJobs = self.failedJobs
-                sys.stderr.write("\nALERT FROM JOBTREE BABYSITTER: " +
+                sys.stderr.write("\nALERT: " +
                                  "The only jobs that I have detected running" +
                                  " for at least the past %ds" % hangTime +
                                  " are %d ktservers." % len(self.curKtservers))
@@ -165,7 +165,8 @@ class JobStatusMonitor(Thread):
                                  " until the servers or your batch system" +
                                  " time out.")
                 sys.stderr.write(" Suggestions:\n" +
-                                 "* look in %s\n" % self.logPath +
+                                 "* look for fatal errors in %s\n" % (
+                                     self.logPath) +
                                  "* jobTreeStatus --jobTree %s --verbose\n"%(
                                      self.jobTreePath) +
                                  "* check your resource manager to see if " +

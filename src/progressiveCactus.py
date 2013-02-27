@@ -48,6 +48,7 @@ from cactus.progressive.configWrapper import ConfigWrapper
 
 from seqFile import SeqFile
 from projectWrapper import ProjectWrapper
+from jobStatusMonitor import JobStatusMonitor
 
 def initParser():
     usage = "usage: runProgressiveCactus.sh [options] <seqFile> <workDir> <outputHalFile>\n\n"\
@@ -212,22 +213,36 @@ def canContinue(jtPath):
     except:
         return False
     
-def runResume(workDir, jtPath):
+def runResume(workDir, jtPath, options):
     envFile = getEnvFilePath()
+    pjPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
+                          '%s_project.xml' % ProjectWrapper.alignmentDirName)
     logFile = os.path.join(workDir, 'cactus.log')
     cmd = '. %s && jobTreeRun --jobTree %s &> %s' % (envFile, jtPath, logFile)
+
+    jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile)
+    if options.database == "kyoto_tycoon":
+        jtMonitor.daemon = True
+        jtMonitor.start()
+        
     system(cmd)
 
 # Run cactus progressive on the project that has been created in workDir.
 # Any jobtree options are passed along.  Should probably look at redirecting
 # stdout/stderr in the future.
-def runCactus(workDir, jtCommands):
+def runCactus(workDir, jtCommands, jtPath, options):
     envFile = getEnvFilePath()
     pjPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
                           '%s_project.xml' % ProjectWrapper.alignmentDirName)
     logFile = os.path.join(workDir, 'cactus.log')
     cmd = '. %s && cactus_progressive.py %s %s &> %s' % (envFile, jtCommands,
                                                          pjPath, logFile)
+
+    jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile)
+    if options.database == "kyoto_tycoon":
+        jtMonitor.daemon = True
+        jtMonitor.start()
+        
     system(cmd)
 
 def checkCactus(workDir, options):
@@ -285,13 +300,13 @@ def main():
                   "resume..\n"
                   " (if you want to start from scratch, delete %s "
                   "then rerun)\n" % (workDir, workDir))
-            runResume(workDir, jtPath)
+            runResume(workDir, jtPath, options)
         else:
             system("rm -rf %s" % jtPath) 
             projWrapper = ProjectWrapper(options, seqFile, workDir)
             projWrapper.writeXml()
             jtCommands = getJobTreeCommands(jtPath, parser, options)
-            runCactus(workDir, jtCommands)
+            runCactus(workDir, jtCommands, jtPath, options)
         cmd = 'jobTreeStatus --failIfNotComplete --jobTree %s &> /dev/null' %\
               jtPath
         system(cmd)
