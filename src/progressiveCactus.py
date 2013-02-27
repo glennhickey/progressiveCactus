@@ -92,6 +92,11 @@ def initParser():
                       "without any progressive decomposition (ie how it "
                       "was originally published in 2011)",
                       default=False)
+    parser.add_option("--noAutoAbort", dest="noAutoAbort", action="store_true",
+                      help="Do not abort automatically when jobTree monitor" +
+                      " suspects a deadlock.  Can maybe be useful for debugging" +
+                      " or on slower resource management systems",
+                      default=False)
 
     #Kyoto Tycoon Options
     ktGroup = OptionGroup(parser, "kyoto_tycoon Options",
@@ -120,8 +125,6 @@ def initParser():
                        help="ktserver options when opening existing db "\
                             "(ex #opts=ls#ktopts=p)",
                        default=None)
-    ktGroup.add_option("--dontCleanKtservers", dest="dontCleanKtservers",
-                       action="store_true", default=False)
     parser.add_option_group(ktGroup)
  
     return parser
@@ -199,6 +202,21 @@ def getEnvFilePath():
     assert os.path.isfile(envFile)
     return envFile
 
+# Unless specified with the --noAutoAbort function, we call this to
+# force an abort if the jobStatusMonitor thinks it's hopeless.
+# We delete the jobTreePath to get rid of kyoto tycoons.
+def abortFunction(jtPath, options):
+    def afClosure():
+        sys.stderr.write('\nAborting due to deadlock (prevent with'
+                         + '--noAutoAbort' +
+                         ' option), and running rm -rf %s\n\n' % jtPath)
+        system('rm -rf %s' % jtPath)
+        sys.exit(-1)
+    if options.noAutoAbort:
+        return None
+    else:
+        return afClosure
+    
 # This is a lame attempt at exposing jobTree's resume functionality.
 # The current rule says that if a jobTree folder is found, and its status
 # can be queried, and it doesn't say there are 0 jobs left... then
@@ -220,7 +238,9 @@ def runResume(workDir, jtPath, options):
     logFile = os.path.join(workDir, 'cactus.log')
     cmd = '. %s && jobTreeRun --jobTree %s &> %s' % (envFile, jtPath, logFile)
 
-    jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile)
+    jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile,
+                                 deadlockCallbackFn=abortFunction(jtPath,
+                                                                  options))
     if options.database == "kyoto_tycoon":
         jtMonitor.daemon = True
         jtMonitor.start()
@@ -238,7 +258,9 @@ def runCactus(workDir, jtCommands, jtPath, options):
     cmd = '. %s && cactus_progressive.py %s %s &> %s' % (envFile, jtCommands,
                                                          pjPath, logFile)
 
-    jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile)
+    jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile,
+                                 deadlockCallbackFn=abortFunction(jtPath,
+                                                                  options))
     if options.database == "kyoto_tycoon":
         jtMonitor.daemon = True
         jtMonitor.start()
