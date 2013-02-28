@@ -109,15 +109,21 @@ class JobStatusMonitor(Thread):
             mc.readXML(self.projectPath)
             for eventName,expPath in mc.expMap.items():
                 exp = ExperimentWrapper(ET.parse(expPath).getroot())
-###############################################################################
-                    # TODO SECONDARY SERVERS
-###############################################################################
                 try:
                     if pingKtServer(exp):
                         self.curKtservers.add("%s_%s:%s" % (
                             eventName, exp.getDbHost(), str(exp.getDbPort())))
                 except:
                     pass
+                try:
+                    secElem = exp.getSecondaryDBElem()
+                    if secElem is not None and pingKtServer(secElem):
+                        self.curKtservers.add("%s_secondary_%s:%s" % (
+                            eventName, secElem.getDbHost(),
+                            str(secElem.getDbPort())))
+                except:
+                    pass
+                        
         except:
             self.curKtservers = set()
         if len(self.prevKtservers) > 0 and len(self.curKtservers) > 0 and\
