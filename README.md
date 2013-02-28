@@ -86,6 +86,15 @@ When running on a cluster, `<workDir>` must be accessible by all nodes.
 
 Location of the output alignment in HAL (Hierarchical ALignment) format.  This is a compressed file that can be accessed via the [HAL Tools](https://github.com/glennhickey/hal/blob/master/README.md)
 
+### Resuming existing jobs
+
+Progressive Cactus will try whenever possible to resume previsouly started jobs.  If it detects a jobTree/ subdirectory in the working directory with evidence of an incomplete run, it will try to use jobTree's resume functionality to pick up exactly where it left off.  If this behavior leads to problems, or is not desired, then it can be prevented by removing the jobTree subdirectory.  Casual users are advised to just remove it.
+
+If Progressive Cactus detects that some sub-alignments in the working directory have already been successfully completed, it will skip them by default.  For example, if the last attempt crashed when aligning the human-chimp ancestor to gorilla, then rerunning will not recompute the human-chimp alignment.  To force re-alignment of already-completed subalignments, use the `--overwrite` option or erase the working directory. 
+
+Progressive Cactus will always attempt to rerun the HAL exporter after alignmenet is completed.  Even if the alignment has not changed. 
+
+
 #### General Options
 
 **`--configFile=CONFIGFILE`**
@@ -103,6 +112,14 @@ Select the type of database from either `tokyo_cabinet` or `kyoto_tycoon` (see b
 **`--legacy`**
 
 Align all genomes at once.   This consistent with the original version of Cactus that this package was designed to replace. 
+
+**`--noAutoAbort`**         
+
+Do not abort automatically when jobTree monitor suspects a deadlock.  Can maybe be useful for debugging or on slower resource management systems.
+
+**`--overwrite`**         
+
+Re-align nodes in the tree that have already been successfully aligned.
 
 ### Database Options
 

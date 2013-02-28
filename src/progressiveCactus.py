@@ -41,6 +41,8 @@ from sonLib.bioio import popenCatch
 
 from jobTree.scriptTree.target import Target 
 from jobTree.scriptTree.stack import Stack
+from jobTree.src.master import getJobFileDirName, getConfigFileName
+from jobTree.src.jobTreeStatus import parseJobFiles
 
 from cactus.progressive.multiCactusProject import MultiCactusProject
 from cactus.progressive.experimentWrapper import ExperimentWrapper
@@ -96,6 +98,10 @@ def initParser():
                       help="Do not abort automatically when jobTree monitor" +
                       " suspects a deadlock.  Can maybe be useful for debugging" +
                       " or on slower resource management systems",
+                      default=False)
+    parser.add_option("--overwrite", dest="overwrite", action="store_true",
+                      help="Re-align nodes in the tree that have already" +
+                      " been successfully aligned.",
                       default=False)
 
     #Kyoto Tycoon Options
@@ -223,13 +229,16 @@ def abortFunction(jtPath, options):
 # try to load it with jobTreeRun
 def canContinue(jtPath):
     try:
-        envFile = getEnvFilePath()
-        cmd = '. %s && jobTreeStatus --jobTree %s 2>&1' % (envFile, jtPath)
-        output = popenCatch(cmd)
-        if output.find('There are 0 jobs currently in job tree') < 0:
+        childJobFileToParentJob, childCounts =  {}, {}
+        updatedJobFiles, shellJobs = set(), set()
+        parseJobFiles(getJobFileDirName(jtPath),
+                      updatedJobFiles, childJobFileToParentJob,
+                      childCounts, shellJobs)
+        if len(updatedJobFiles) > 0 or len(len(childCounts)) > 0:
             return True
     except:
-        return False
+        pass
+    return False
     
 def runResume(workDir, jtPath, options):
     envFile = getEnvFilePath()
@@ -257,6 +266,8 @@ def runCactus(workDir, jtCommands, jtPath, options):
     logFile = os.path.join(workDir, 'cactus.log')
     cmd = '. %s && cactus_progressive.py %s %s &> %s' % (envFile, jtCommands,
                                                          pjPath, logFile)
+    if options.overwrite:
+        cmd += ' --overwrite'
 
     jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile,
                                  deadlockCallbackFn=abortFunction(jtPath,
@@ -320,7 +331,7 @@ def main():
         if canContinue(jtPath):
             print("incomplete jobTree found in %s/jobTree: attempting to "
                   "resume..\n"
-                  " (if you want to start from scratch, delete %s "
+                  " (if you want this to happen, delete %s/jobTree "
                   "then rerun)\n" % (workDir, workDir))
             runResume(workDir, jtPath, options)
         else:

@@ -126,17 +126,57 @@ class ProjectWrapper:
 
         projPath = os.path.join(self.workingDir,
                                 ProjectWrapper.alignmentDirName)
-        if os.path.exists(projPath):
+        if os.path.exists(projPath) and self.options.overwrite:
             system("rm -rf %s" % projPath)
         if self.options.outputMaf is True:
             fixNames=1
         else:
             fixNames=0
+        if os.path.exists(projPath):
+           if not self.isSameAsExisting(expPath, projPath, fixNames):
+               raise RuntimeError("Existing project %s not " % projPath+
+                                  "compatible with current input.  Please "
+                                  "erase the working directory or rerun "
+                                  "with the --overwrite option to start "
+                                  "from scratch.")
+           else:
+               print ("Continuing existing alignment.  Use --overwrite "
+                      "or erase the working directory to force restart from "
+                      "scratch.")
+        else:
+            system("cactus_createMultiCactusProject.py %s %s --fixNames=%d" % (
+                expPath, projPath, fixNames))
+
+    # create a project in a dummy directory.  check if the
+    # project xml is the same as the current project.
+    # we do this to see if we should start fresh or try to
+    # work with the existing project when the overwrite flag is off
+    def isSameAsExisting(self, expPath, projPath, fixNames):
+        if not os.path.exists(projPath):
+            return False
+        oldPath = os.path.dirname(projPath + "/")
+        tempPath = "%s_temp" % oldPath
+        if os.path.exists(tempPath):
+            system("rm -rf %s" % tempPath)
         system("cactus_createMultiCactusProject.py %s %s --fixNames=%d" % (
-            expPath, projPath, fixNames))
+            expPath, tempPath, fixNames))
+        projFilePathNew = os.path.join(tempPath,'%s_temp_project.xml' %
+                                       self.alignmentDirName)
+        projFilePathOld = os.path.join(oldPath, '%s_project.xml' %
+                                       self.alignmentDirName)
         
-        
-        
+        newFile = [line for line in open(projFilePathNew, "r")]
+        oldFile = [line for line in open(projFilePathOld, "r")]
+        areSame = True
+        if len(newFile) != len(oldFile):
+            areSame = False
+        for newLine, oldLine in zip(newFile, oldFile):
+            if newLine.replace(tempPath, oldPath) != oldLine:
+                areSame = False
+        system("rm -rf %s" % tempPath)
+        return areSame
+
+    
 
         
         
