@@ -144,8 +144,11 @@ class ProjectWrapper:
                       "or erase the working directory to force restart from "
                       "scratch.")
         else:
-            system("cactus_createMultiCactusProject.py %s %s --fixNames=%d" % (
-                expPath, projPath, fixNames))
+            cmd = "cactus_createMultiCactusProject.py %s %s --fixNames=%d" % (
+                expPath, projPath, fixNames)
+            if len(self.seqFile.outgroups) > 0: 
+                cmd += " --outgroupNames " + ",".join(self.seqFile.outgroups)
+            system(cmd)
 
     # create a project in a dummy directory.  check if the
     # project xml is the same as the current project.
@@ -158,8 +161,11 @@ class ProjectWrapper:
         tempPath = "%s_temp" % oldPath
         if os.path.exists(tempPath):
             system("rm -rf %s" % tempPath)
-        system("cactus_createMultiCactusProject.py %s %s --fixNames=%d" % (
-            expPath, tempPath, fixNames))
+        cmd = "cactus_createMultiCactusProject.py %s %s --fixNames=%d" % (
+            expPath, tempPath, fixNames)
+        if len(self.seqFile.outgroups) > 0: 
+            cmd += " --outgroupNames " + ",".join(self.seqFile.outgroups)
+        system(cmd)
         projFilePathNew = os.path.join(tempPath,'%s_temp_project.xml' %
                                        self.alignmentDirName)
         projFilePathOld = os.path.join(oldPath, '%s_project.xml' %

@@ -46,6 +46,15 @@ from sonLib.nxnewick import NXNewick
 # human /hive/seq/human
 # dog /users/name/fasta/dog.fa
 # cat /tmp/cat/
+#
+# now added * to signify high quality addembly. ex, use human
+# and cat as outgroups but never dog:
+#
+# (human, (dog, cat));
+# *human /hive/seq/human
+# dog /users/name/fasta/dog.fa
+# *cat /tmp/cat/
+
 class SeqFile:
     rootName = 'ProgressiveCactusRoot'
     branchLen = 1
@@ -58,6 +67,7 @@ class SeqFile:
             raise RuntimeError("File not found: %s" % path)
         self.tree = None
         self.pathMap = dict()
+        self.outgroups = []
         seqFile = open(path, "r")
         for l in seqFile:
             line = l.strip()
@@ -72,8 +82,13 @@ class SeqFile:
                     except:
                         raise RuntimeError("Failed to parse newick tree: %s" %
                                            line)
+                elif len(tokens) > 0 and tokens[0] == '*':
+                    sys.stderr.write("Skipping line %s\n" % l)
                 elif line[0] != '(' and len(tokens) >= 2:
                     name = tokens[0]
+                    if name[0] == '*':
+                        name = name[1:]
+                        self.outgroups.append(name)
                     path = string.join(tokens[1:])
                     if name in self.pathMap:
                         raise RuntimeError("Duplicate name found: %s" % name)

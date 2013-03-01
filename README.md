@@ -55,11 +55,14 @@ Text file containing the locations of the input sequences as well as their phylo
     name1 path1
     name2 path2
     ...
-    nameN nameN
+    nameN pathN
+
+An optional * can be placed at the beginning of a name to specify that its assembly is of reference quality.  This implies that it can be used as an outgroup for sub-alignments.  If no genomes are marked in this way, all genomes are assumed to be of reference quality.  The star should only be placed on the name-path lines and not inside the tree.
 
 * The tree, if specified, must be on a single line.  All leaves must be labeled and these labels must be unique.  Labels should not contain any spaces.
 * Branch lengths that are not specified are assumed to be 1
 * Lines beginning with # are ignored. 
+* Sequence names beginning with *
 * Sequence paths must point to either a FASTA file or a directory containing 1 or more FASTA files.
 * Sequence paths must not contain spaces.
 * Sequence paths that are not referred to in the tree are ignored
@@ -70,10 +73,12 @@ Text file containing the locations of the input sequences as well as their phylo
 Example:
      
 	  # Sequence data for progressive alignment of 4 genomes
+	  # human, chimp and gorilla a flagged as good asseblies.  
+	  # since orang isn't, it will not be used as an outgroup species.
      (((human:0.006,chimp:0.006667):0.0022,gorilla:0.008825):0.0096,orang:0.01831);
-     human /data/genomes/human/human.fa
-     chimp /data/genomes/chimp/
-     gorilla /data/genomes/gorilla/gorilla.fa
+     *human /data/genomes/human/human.fa
+     *chimp /data/genomes/chimp/
+     *gorilla /data/genomes/gorilla/gorilla.fa
      orang /cluster/home/data/orang/
 
 **`<workDir>`**
