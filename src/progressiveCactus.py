@@ -264,10 +264,16 @@ def runCactus(workDir, jtCommands, jtPath, options):
     pjPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
                           '%s_project.xml' % ProjectWrapper.alignmentDirName)
     logFile = os.path.join(workDir, 'cactus.log')
-    cmd = '. %s && cactus_progressive.py %s %s &> %s' % (envFile, jtCommands,
-                                                         pjPath, logFile)
+
     if options.overwrite:
-        cmd += ' --overwrite'
+        overwriteFlag = '--overwrite'
+    else:
+        overwriteFlag = ''
+
+    cmd = '. %s && cactus_progressive.py %s %s %s &> %s' % (envFile, jtCommands,
+                                                            pjPath,
+                                                            overwriteFlag,
+                                                            logFile)
 
     jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile,
                                  deadlockCallbackFn=abortFunction(jtPath,
