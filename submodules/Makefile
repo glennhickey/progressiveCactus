@@ -100,8 +100,13 @@ cabinetClean:
 	cd kyototycoon && make clean
 	rm -f $(CURDIR)/tokyocabinet/lib/*.a $(CURDIR)/kyotocabinet/lib/*.a  $(CURDIR)/kyototycoon/lib/*.a
 
+ifeq ($(enablePBSTorque), yes)
 pbsDrmaaClean:
 	cd pbs-drmaa && make clean
+else
+pbsDrmaaClean:
+	cd .
+endif
 
 hdf5Clean:
 	cd hdf5 && make clean
