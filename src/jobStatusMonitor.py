@@ -154,7 +154,7 @@ class JobStatusMonitor(Thread):
                      " until the servers or your batch system" +
                      " time out.")
         self.__write(" Suggestions:\n" +
-                     "* wait a bit.  Maybe it will resume" +
+                     "* wait a bit.  Maybe it will resume\n" +
                      "* look for fatal errors in %s\n" % (
                          self.logPath) +
                      "* jobTreeStatus --jobTree %s --verbose\n"%(
