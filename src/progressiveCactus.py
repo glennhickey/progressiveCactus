@@ -94,10 +94,13 @@ def initParser():
                       "without any progressive decomposition (ie how it "
                       "was originally published in 2011)",
                       default=False)
-    parser.add_option("--noAutoAbort", dest="noAutoAbort", action="store_true",
-                      help="Do not abort automatically when jobTree monitor" +
-                      " suspects a deadlock.  Can maybe be useful for debugging" +
-                      " or on slower resource management systems",
+    parser.add_option("--autoAbortOnDeadlock", dest="autoAbortOnDeadlock",
+                      action="store_true",
+                      help="Abort automatically when jobTree monitor" +
+                      " suspects a deadlock by deleting the jobTree folder." +
+                      " Will guarantee no trailing ktservers but still " +
+                      " dangerous to use until we can more robustly detect " +
+                      " deadlocks.",
                       default=False)
     parser.add_option("--overwrite", dest="overwrite", action="store_true",
                       help="Re-align nodes in the tree that have already" +
@@ -208,7 +211,7 @@ def getEnvFilePath():
     assert os.path.isfile(envFile)
     return envFile
 
-# Unless specified with the --noAutoAbort function, we call this to
+# If specified with the risky --autoAbortOnDeadlock option, we call this to
 # force an abort if the jobStatusMonitor thinks it's hopeless.
 # We delete the jobTreePath to get rid of kyoto tycoons.
 def abortFunction(jtPath, options):
@@ -218,10 +221,10 @@ def abortFunction(jtPath, options):
                          ' option), and running rm -rf %s\n\n' % jtPath)
         system('rm -rf %s' % jtPath)
         sys.exit(-1)
-    if options.noAutoAbort:
-        return None
-    else:
+    if options.autoAbortOnDeadlock:
         return afClosure
+    else:
+        return None
     
 # This is a lame attempt at exposing jobTree's resume functionality.
 # The current rule says that if a jobTree folder is found, and its status

@@ -57,8 +57,8 @@ from projectWrapper import ProjectWrapper
 # Make sure I'm a daemon! 
 ###############################################################################
 class JobStatusMonitor(Thread):
-    def __init__(self, jobTreePath, projectPath, logPath, pollTime=400,
-                 deadlockTime=1200, deadlockCallbackFn=None):
+    def __init__(self, jobTreePath, projectPath, logPath, pollTime=600,
+                 deadlockTime=3600, deadlockCallbackFn=None):
         Thread.__init__(self)
         self.jobTreePath = jobTreePath
         self.projectPath = projectPath
@@ -123,7 +123,7 @@ class JobStatusMonitor(Thread):
                             str(secElem.getDbPort())))
                 except:
                     pass
-                        
+
         except:
             self.curKtservers = set()
         if len(self.prevKtservers) > 0 and len(self.curKtservers) > 0 and\
@@ -133,7 +133,7 @@ class JobStatusMonitor(Thread):
             self.prevKtservers = set(self.curKtservers)
             self.sameKtserversTime = 0
 
-                 
+
     def __resetTimes(self):
         self.curActiveJobs = set()
         self.prevActiveJobs = set()
@@ -143,25 +143,31 @@ class JobStatusMonitor(Thread):
         self.sameJobsTime = 0
         self.sameKtserversTime = 0
 
+    def __write(self, msg):
+        sys.stderr.write(msg)
+        with open(self.logPath, "a") as logFile:
+            logFile.write(msg)
+
     def __hints(self):
-        sys.stderr.write(" It is likely that Progressive Cactus " +
-                         "is in a deadlock state and will not finish"+
-                         " until the servers or your batch system" +
-                         " time out.")
-        sys.stderr.write(" Suggestions:\n" +
-                         "* look for fatal errors in %s\n" % (
-                             self.logPath) +
-                         "* jobTreeStatus --jobTree %s --verbose\n"%(
-                             self.jobTreePath) +
-                         "* check your resource manager to see if " +
-                         "any more jobs are queued. maybe your "+
-                         "cluster is just busy...\n" +
-                         "* if not it's probably time to abort.\n")
-        sys.stderr.write("Note that you can (and probably should)" +
-                         " kill any trailing ktserver jobs by"
-                         " running\n  rm -rf %s" % self.jobTreePath +
-                         "\nThey will eventually timeout on their"+
-                        " own but it could take days.\n\n")
+        self.__write(" It is likely that Progressive Cactus " +
+                     "is in a deadlock state and will not finish"+
+                     " until the servers or your batch system" +
+                     " time out.")
+        self.__write(" Suggestions:\n" +
+                     "* wait a bit.  Maybe it will resume" +
+                     "* look for fatal errors in %s\n" % (
+                         self.logPath) +
+                     "* jobTreeStatus --jobTree %s --verbose\n"%(
+                         self.jobTreePath) +
+                     "* check your resource manager to see if " +
+                     "any more jobs are queued. maybe your "+
+                     "cluster is just busy...\n" +
+                     "* if not it's probably time to abort.\n")
+        self.__write("Note that you can (and probably should)" +
+                     " kill any trailing ktserver jobs by"
+                     " running\n  rm -rf %s" % self.jobTreePath +
+                     "\nThey will eventually timeout on their"+
+                     " own but it could take days.\n\n")
 
     ###########################################################################
     # Poll until we hit a deadlock.  If that happens print a warning
@@ -169,40 +175,44 @@ class JobStatusMonitor(Thread):
     ###########################################################################
     def run(self):
         self.__resetTimes()
-        
+        inDeadlock = False
         while True:
             sleep(self.pollTime)
             self.__pollJobTree()
             self.__pollKtServers()
 
             if self.sameJobsTime > self.deadlockTime and\
-               self.sameKtserversTime > self.deadlockTime:
+                   self.sameKtserversTime > self.deadlockTime:
+                inDeadlock = True
                 hangTime = min(self.sameJobsTime, self.sameKtserversTime)
                 failedJobs = self.failedJobs
-                sys.stderr.write("\n\n"
-                                 "*****************************************"
-                                 "*****************************************\n"
-                                 "*****************************************"
-                                 "*****************************************\n"
-                                 "**                                    ALE"
-                                 "RT                                     **\n"
-                                 "*****************************************"
-                                 "*****************************************\n"
-                                 "*****************************************"
-                                 "*****************************************\n")
-                sys.stderr.write("The only jobs that I have detected running" +
-                                 " for at least the past %ds" % hangTime +
-                                 " are %d ktservers." % len(self.curKtservers))
+                self.__write("\n\n"
+                             "*****************************************"
+                             "*****************************************\n"
+                             "*****************************************"
+                             "*****************************************\n"
+                             "**                                    ALE"
+                             "RT                                     **\n"
+                             "*****************************************"
+                             "*****************************************\n"
+                             "*****************************************"
+                             "*****************************************\n")
+                self.__write("The only jobs that I have detected running" +
+                             " for at least the past %ds" % hangTime +
+                             " are %d ktservers." % len(self.curKtservers))
                 if failedJobs > 0:
-                    sys.stderr.write(" Furthermore, there appears to have " +
-                                     "been %d failed jobs. " % failedJobs)    
+                    self.__write(" Furthermore, there appears to have " +
+                                 "been %d failed jobs. " % failedJobs)    
                 if self.deadlockCallbackFn is not None:
                     self.deadlockCallbackFn()
                 else:
                     self.__hints()
-                    self.__resetTimes()
-                    self.deadlockTime *= 2
-                                                                   
+            else:
+                if inDeadlock is True:
+                    self.__write("\nDeadlock no longer detected.  Progress"+
+                                 " resumed")
+                inDeadLock = False
+
 
 
 
