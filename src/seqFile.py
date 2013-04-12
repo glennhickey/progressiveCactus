@@ -56,7 +56,6 @@ from sonLib.nxnewick import NXNewick
 # *cat /tmp/cat/
 
 class SeqFile:
-    rootName = 'ProgressiveCactusRoot'
     branchLen = 1
     def __init__(self, path=None):
         if path is not None:
@@ -98,7 +97,6 @@ class SeqFile:
         
         if self.tree is None:
             self.starTree()
-        self.tree.setName(self.tree.getRootId(), SeqFile.rootName)
         self.cleanTree()
         self.validate()
 
@@ -107,7 +105,6 @@ class SeqFile:
         label = 0
         self.tree.nxDg.add_node(label)
         self.tree.rootId = label
-        self.tree.setName(label, SeqFile.rootName)
         for name in self.pathMap.keys():
             label += 1
             self.tree.nxDg.add_edge(0, label)

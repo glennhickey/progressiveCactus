@@ -295,8 +295,13 @@ def checkCactus(workDir, options):
 # just move out the root maf.  
 def extractOutput(workDir, outputHalFile, options):
     if options.outputMaf is not None:
+        mcProj = MultiCactusProject()
+        mcProj.readXML(
+            os.path.join(workDir, ProjectWrapper.alignmentDirName,
+                         ProjectWrapper.alignmentDirName + "_project.xml"))
+        rootName = mcProj.mcTree.getRootName()
         rootPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
-        SeqFile.rootName, SeqFile.rootName + '.maf')
+        rootName, rootName + '.maf')
         cmd = 'mv %s %s' % (rootPath, options.outputMaf)
         system(cmd)
     envFile = getEnvFilePath()
