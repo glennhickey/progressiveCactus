@@ -32,6 +32,7 @@ import imp
 import socket
 import signal
 import traceback
+import datetime
 
 from sonLib.bioio import logger
 from sonLib.bioio import setLoggingFromOptions
@@ -226,39 +227,6 @@ def abortFunction(jtPath, options):
     else:
         return None
     
-# This is a lame attempt at exposing jobTree's resume functionality.
-# The current rule says that if a jobTree folder is found, and its status
-# can be queried, and it doesn't say there are 0 jobs left... then
-# try to load it with jobTreeRun
-def canContinue(jtPath):
-    try:
-        childJobFileToParentJob, childCounts =  {}, {}
-        updatedJobFiles, shellJobs = set(), set()
-        parseJobFiles(getJobFileDirName(jtPath),
-                      updatedJobFiles, childJobFileToParentJob,
-                      childCounts, shellJobs)
-        if len(updatedJobFiles) > 0 or len(len(childCounts)) > 0:
-            return True
-    except:
-        pass
-    return False
-    
-def runResume(workDir, jtPath, options):
-    envFile = getEnvFilePath()
-    pjPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
-                          '%s_project.xml' % ProjectWrapper.alignmentDirName)
-    logFile = os.path.join(workDir, 'cactus.log')
-    cmd = '. %s && jobTreeRun --jobTree %s &> %s' % (envFile, jtPath, logFile)
-
-    jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile,
-                                 deadlockCallbackFn=abortFunction(jtPath,
-                                                                  options))
-    if options.database == "kyoto_tycoon":
-        jtMonitor.daemon = True
-        jtMonitor.start()
-        
-    system(cmd)
-
 # Run cactus progressive on the project that has been created in workDir.
 # Any jobtree options are passed along.  Should probably look at redirecting
 # stdout/stderr in the future.
@@ -270,13 +238,19 @@ def runCactus(workDir, jtCommands, jtPath, options):
 
     if options.overwrite:
         overwriteFlag = '--overwrite'
+        system("rm -f %s" % logFile)
     else:
         overwriteFlag = ''
 
-    cmd = '. %s && cactus_progressive.py %s %s %s &> %s' % (envFile, jtCommands,
-                                                            pjPath,
-                                                            overwriteFlag,
-                                                            logFile)
+    logHandle = open(logFile, "a")
+    logHandle.write("\n%s: Beginning Progressive Cactus Alignment\n\n" % str(
+        datetime.datetime.now()))
+    logHandle.close()
+    cmd = '. %s && cactus_progressive.py %s %s %s >> %s 2>&1' % (envFile,
+                                                                 jtCommands,
+                                                                 pjPath,
+                                                                 overwriteFlag,
+                                                                 logFile)
 
     jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile,
                                  deadlockCallbackFn=abortFunction(jtPath,
@@ -286,6 +260,10 @@ def runCactus(workDir, jtCommands, jtPath, options):
         jtMonitor.start()
         
     system(cmd)
+    logHandle = open(logFile, "a")
+    logHandle.write("\n%s: Finished Progressive Cactus Alignment\n" % str(
+        datetime.datetime.now()))
+    logHandle.close()
 
 def checkCactus(workDir, options):
     pass
@@ -305,12 +283,20 @@ def extractOutput(workDir, outputHalFile, options):
         cmd = 'mv %s %s' % (rootPath, options.outputMaf)
         system(cmd)
     envFile = getEnvFilePath()
-    logFile = os.path.join(workDir, 'cactus2hal.log')
+    logFile = os.path.join(workDir, 'cactus.log')
     pjPath = os.path.join(workDir, ProjectWrapper.alignmentDirName,
                           '%s_project.xml' % ProjectWrapper.alignmentDirName)
-    cmd = '. %s && cactus2hal.py %s %s &> %s' % (envFile, pjPath,
-                                                 outputHalFile, logFile)
+    logHandle = open(logFile, "a")
+    logHandle.write("\n\n%s: Beginning HAL Export\n\n" % str(
+        datetime.datetime.now()))
+    logHandle.close()
+    cmd = '. %s && cactus2hal.py %s %s >> %s 2>&1' % (envFile, pjPath,
+                                                      outputHalFile, logFile)
     system(cmd)
+    logHandle = open(logFile, "a")
+    logHandle.write("\n%s: Finished HAL Export \n" % str(
+        datetime.datetime.now()))
+    logHandle.close()
 
 def main():
     # init as dummy function
@@ -342,18 +328,11 @@ def main():
         jtPath = os.path.join(workDir, "jobTree")
         stage = 1
         print "\nBeginning Alignment"
-        if canContinue(jtPath):
-            print("incomplete jobTree found in %s/jobTree: attempting to "
-                  "resume..\n"
-                  " (if you want this to happen, delete %s/jobTree "
-                  "then rerun)\n" % (workDir, workDir))
-            runResume(workDir, jtPath, options)
-        else:
-            system("rm -rf %s" % jtPath) 
-            projWrapper = ProjectWrapper(options, seqFile, workDir)
-            projWrapper.writeXml()
-            jtCommands = getJobTreeCommands(jtPath, parser, options)
-            runCactus(workDir, jtCommands, jtPath, options)
+        system("rm -rf %s" % jtPath) 
+        projWrapper = ProjectWrapper(options, seqFile, workDir)
+        projWrapper.writeXml()
+        jtCommands = getJobTreeCommands(jtPath, parser, options)
+        runCactus(workDir, jtCommands, jtPath, options)
         cmd = 'jobTreeStatus --failIfNotComplete --jobTree %s &> /dev/null' %\
               jtPath
         system(cmd)
@@ -375,7 +354,7 @@ def main():
                              os.path.join(workDir, "cactus.log"))
         elif stage == 2:
             sys.stderr.write("More information can be found in %s\n" %
-                             os.path.join(workDir, "cactus2hal.log"))
+                             os.path.join(workDir, "cactus.log"))
         return -1
 
 if __name__ == '__main__':

@@ -140,9 +140,12 @@ class ProjectWrapper:
                                   "with the --overwrite option to start "
                                   "from scratch.")
            else:
-               print ("Continuing existing alignment.  Use --overwrite "
-                      "or erase the working directory to force restart from "
-                      "scratch.")
+               logPath = os.path.join(self.workingDir, 'cactus.log')
+               logFile = open(logPath, "a")
+               logFile.write("\nContinuing existing alignment.  Use "
+                             "--overwrite or erase the working directory to "
+                             "force restart from scratch.\n")
+               logFile.close()
         else:
             cmd = "cactus_createMultiCactusProject.py %s %s --fixNames=%d" % (
                 expPath, projPath, fixNames)

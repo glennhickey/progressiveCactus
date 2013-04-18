@@ -83,7 +83,7 @@ Example:
 
 **`<workDir>`**
 
-Working directory for the cactus aligner.  It will be created if it doesn't exist.  Ideally it should be empty.  If it isn't, its contents may be overwritten.  If Progressive Cactus finds evidence of a partially completed alignment in the working directory, it will try to resume this job (a message will be printed).  To avoid this, make sure the directory is empty. 
+Working directory for the cactus aligner.  It will be created if it doesn't exist.  If an incomplete alignment is found in this directory for the same input data, Progressive Cactus will attempt to continue it (ie skip any ancestral genomes that were successfully reconstructed previously).  If this behavior is undesired, either erase the working directory or use the `--overwrite` option to restart from scratch. 
 
 When running on a cluster, `<workDir>` must be accessible by all nodes.
 
