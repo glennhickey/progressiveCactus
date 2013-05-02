@@ -6,9 +6,9 @@ ucsc = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal 
 modules = ${external} ${ucsc}
 #modules = ${ucsc}
 
-.PHONY: all %.all clean %.clean envRereshRule virtPyRule lastzRule zlibRule bzip2Rule tokyocabinetRule kyotocabinetRule pbsDrmaaRule drmaaPythonRule hdf5Rule zlibClean bzip2Clean lastzClean cabinetClean hdf5Clean pbsDrmaaClean test %.test datasets
+.PHONY: all %.all clean %.clean envRereshRule virtPyRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule pbsDrmaaRule drmaaPythonRule hdf5Rule zlibClean bzip2Clean lastzClean cabinetClean hdf5Clean pbsDrmaaClean test %.test datasets
 
-all : envRefreshRule virtPyRule lastzRule zlibRule bzip2Rule tokyocabinetRule kyotocabinetRule kyototycoonRule pbsDrmaaRule drmaaPythonRule hdf5Rule datasets ${ucsc:%=ucsc.%}
+all : envRefreshRule virtPyRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule pbsDrmaaRule drmaaPythonRule hdf5Rule datasets ${ucsc:%=ucsc.%}
 
 justUCSC : ${ucsc:%=ucsc.%}
 
@@ -52,7 +52,7 @@ bzip2Rule :
 #	echo export PATH=$(CURDIR)/bzip2/bin:\$$PATH >> ${myEnv}
 
 tokyocabinetRule :
-	cd tokyocabinet &&./configure --prefix=$(CURDIR)/tokyocabinet ${ktlinkingflags} && make && make install
+	cd tokyocabinet &&./configure --prefix=$(CURDIR)/tokyocabinet ${ktlinkingflags} --disable-bzip && make && make install
 	echo export PATH=$(CURDIR)/tokyocabinet/bin:\$$PATH >> ${myEnv}
 
 kyotocabinetRule :
