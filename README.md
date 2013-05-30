@@ -34,6 +34,19 @@ If any errors occur during the build process, you are unlikely to be able to use
 
 *Note that all dependencies are also built and included in the submodules/ directory.  This increases the size and build time but greatly simplifies installation and version management.  The installation does not create or modify any files outside the progressiveCactus/ directory. *  
 
+Updating the distribution
+-----
+
+To update a progressiveCactus instllation run the following:
+
+    cd progressiveCactus
+    git pull
+    git submodule update --init
+    make ucscClean
+    make
+
+This will update the installation and all the submodules it contains.
+
 Running the aligner
 -----
 
