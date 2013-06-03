@@ -93,6 +93,11 @@ Example:
      *chimp /data/genomes/chimp/
      *gorilla /data/genomes/gorilla/gorilla.fa
      orang /cluster/home/data/orang/
+     
+The sequences for each species are named by their fasta headers. To avoid ambiguity these headers must
+be unique. Additionally, by default we remove all non-alphanumeric characters from fasta headers, and it is the resulting single
+word alphanumeric string that must be unique. We do this to ensure compatibility with visualisation tools, e.g. the UCSC browser. 
+To disable this behaviour remove the first preprocessor tag from the config.xml file that you use.
 
 **`<workDir>`**
 
