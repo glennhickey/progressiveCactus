@@ -177,7 +177,7 @@ Align the small Blanchette alignment
 ### Export MAF
 
     bin/runProgressiveCactus.sh examples/blanchette00.txt ./work ./work/b00.hal 
-    source environment && hal2mafMP.py ./work/b00.hal ./work/b00.hal.maf
+    source ./environment && hal2mafMP.py ./work/b00.hal ./work/b00.hal.maf
 
 ### Use kyoto_tycoon
 
@@ -199,7 +199,6 @@ Progressive Cactus was developed in [*David Haussler*'s lab at UCSC](http://www.
 
 * Progressive Cactus and HAL: *Glenn Hickey* hickey@soe.ucsc.edu
 * Cactus algorithm and JobTree: *Benedict Paten* benedict@soe.ucsc.edu
-* MAF tools: *Dent Earl* dearl@soe.ucsc.edu
 
 #### External Packages redistributed as git submodules
 
