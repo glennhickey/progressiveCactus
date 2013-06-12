@@ -124,10 +124,6 @@ Progressive Cactus will always attempt to rerun the HAL exporter after alignmene
 
 Location of progressive cactus configuration file in XML format.  The default configuration file can be found in `progressiveCactus/submodules/cactus/progressive/cactus_progressive_workflow_config.xml`.  These parameters are currently undocumented so modify at your own risk.
 
-**`--outputMaf=OUTPUTMAF`**
-
-Create a MAF version of the multiple alignment in the desired location in addition to the HAL file.  This option may drastically increase the space, time and memory required to perform a progressive alignment: Consider using `progressiveCactus/submodules/hal/hal2maf` on the output hal file instead. 
-
 **`--database=DATABASE`**
 
 Select the type of database from either `tokyo_cabinet` or `kyoto_tycoon` (see below).  `kyoto_tycoon` is necessary to obtain speedup from most types of parallelism and therefore recommended for larger alignments.  `tokyo_cabinet` is simpler as no server processes are created but is only useful for testing the basic installation on small examples.
@@ -136,9 +132,9 @@ Select the type of database from either `tokyo_cabinet` or `kyoto_tycoon` (see b
 
 Align all genomes at once.   This consistent with the original version of Cactus that this package was designed to replace. 
 
-**`--noAutoAbort`**         
+**`--autoAbortOnDeadlock`**         
 
-Do not abort automatically when jobTree monitor suspects a deadlock.  Can maybe be useful for debugging or on slower resource management systems.
+Abort automatically when jobTree monitor suspects a deadlock by deleting the jobTree folder. Will guarantee no trailing ktservers but still  dangerous to use until we can more robustly detect  deadlocks.
 
 **`--overwrite`**         
 
@@ -148,15 +144,16 @@ Re-align nodes in the tree that have already been successfully aligned.
 
 During alignment, a cactus graph is built and maintained in a database.  Two types of databasese are supported for this task: Tokyo Cabinet and Kyoto Tycoon.  They are freely available from [Fal Labs](http://fallabs.com/) and mirrored in the Progressive Cactus installation directory. 
 
-####Tokyo Cabinet
-
-This is the default and simplest option.  The cactus graphs are stored on disk (in `<workDir>`).  Since parallel write access is limited, Tokyo Cabinet is only practical for very small test alignments.
-
 ####Kyoto Tycoon
 
 Available by default (orwith the `--database kyoto_tycoon`) command line option.  Kyoto Tycoon databases are kept *in memory* and are accessed via a client-server model.  Both parallel reads and writes are supported.   It is best to leave all the Kyoto Tycoon-related options (`--kt*`) alone unless you are an expert.  
 
 *The scripts do their best to clean them up, but it is possible that trailing ktserver daemons linger after certain crash situations.  One way to clear them is to delete the contents of `workdDir/jobTree`
+
+####Tokyo Cabinet
+
+This is the simplest option.  The cactus graphs are stored on disk (in `<workDir>`).  Since parallel write access is limited, Tokyo Cabinet is only practical for very small test alignments.
+
 
 ### JobTree Options and Running on the Cluster
 
@@ -179,7 +176,8 @@ Align the small Blanchette alignment
 
 ### Export MAF
 
-    bin/runProgressiveCactus.sh examples/blanchette00.txt ./work ./work/b00.hal --outputMaf ./work/b00.maf
+    bin/runProgressiveCactus.sh examples/blanchette00.txt ./work ./work/b00.hal 
+    source environment && hal2mafMP.py ./work/b00.hal ./work/b00.hal.maf
 
 ### Use kyoto_tycoon
 
