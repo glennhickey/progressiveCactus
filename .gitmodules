@@ -34,9 +34,6 @@
 [submodule "submodules/kyotocabinet"]
 	path = submodules/kyotocabinet
 	url = git://github.com/UCSCReconGroup/kyotocabinet.git
-[submodule "submodules/mafJoin"]
-	path = submodules/mafJoin
-	url = git://github.com/dentearl/mafJoin.git
 [submodule "submodules/virtualenv"]
 	path = submodules/virtualenv
 	url = git://github.com/pypa/virtualenv.git
