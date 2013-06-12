@@ -179,10 +179,6 @@ Align the small Blanchette alignment
     bin/runProgressiveCactus.sh examples/blanchette00.txt ./work ./work/b00.hal 
     source ./environment && hal2mafMP.py ./work/b00.hal ./work/b00.hal.maf
 
-### Use kyoto_tycoon
-
-    bin/runProgressiveCactus.sh examples/blanchette00.txt ./work ./work/b00.hal --database kyoto_tycoon
-
 ### Use more threads
 
     bin/runProgressiveCactus.sh examples/blanchette00.txt ./work ./work/b00.hal --database kyoto_tycoon --maxThreads 10
@@ -190,7 +186,7 @@ Align the small Blanchette alignment
 HAL Tools
 -----
 
-Please see the [HAL Manual](https://github.com/glennhickey/hal/blob/master/README.md).  Note that all binaries are found in `progressiveCactus/submodules/hal/bin`
+Please see the [HAL Manual](https://github.com/glennhickey/hal/blob/master/README.md).  Note that all binaries are found in `progressiveCactus/submodules/hal/bin` and should be run after calling `source ./environment`
 
 Credits
 ------
