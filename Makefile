@@ -1,27 +1,19 @@
-modules = submodules
 
 virtPyDir = $(CURDIR)/python
 virtPyEnv = ${virtPyDir}/bin/activate
 virtPy = ${virtPyDir}/bin/python
 export
 
-.PHONY: all %.all clean %.clean
+.PHONY: all clean test ucsc ucscClean 
 
-all : ${modules:%=all.%}
+all : 
+	cd submodules && make all
 
-all.%:
-	cd $* && make all 
+clean:
+	cd submodules && make clean
 
-clean:  ${modules:%=clean.%}
-	cd $* && make clean
-
-clean.%:
-	cd $* && make clean
-
-test: ${modules:%=test.%}
-
-test.%:
-	cd $* && make test
+test:
+	cd submodules && make test
 
 ucsc:
 	cd submodules && make justUCSC

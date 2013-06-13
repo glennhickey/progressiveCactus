@@ -1,16 +1,16 @@
 include include.mk
 
-external = zlib bzip2 tokyocabinet kyotocabinet kyototycoon lastz hdf5 pbs-drmaa
-ucsc = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal
+externalModules = zlib tokyocabinet kyotocabinet kyototycoon lastz hdf5 pbs-drmaa
+ucscModules = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal
 
-modules = ${external} ${ucsc}
+modules = ${externalModules} ${ucscModules}
 #modules = ${ucsc}
 
-.PHONY: all %.all clean %.clean envRereshRule virtPyRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule pbsDrmaaRule drmaaPythonRule hdf5Rule zlibClean bzip2Clean lastzClean cabinetClean hdf5Clean pbsDrmaaClean test %.test datasets
+.PHONY: all %.all justUCSC %.justUCSC envRefreshRule virtPyRule pbsDrmaaRule drmaaPythonRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule %.ucsc clean %.clean justUCSCClean %.justUCSCClean zlibClean lastzClean cabinetClean pbsDrmaaClean hdf5Clean test %.test datasets
 
-all : envRefreshRule virtPyRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule pbsDrmaaRule drmaaPythonRule hdf5Rule datasets ${ucsc:%=ucsc.%}
+all : envRefreshRule virtPyRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule pbsDrmaaRule drmaaPythonRule hdf5Rule datasets ${ucscModules:%=ucsc.%}
 
-justUCSC : ${ucsc:%=ucsc.%}
+justUCSC : ${ucscModules:%=ucsc.%}
 
 envRefreshRule:
 	rm -f ${myEnv}
@@ -46,11 +46,6 @@ zlibRule :
 	cd zlib && ./configure --prefix=$(CURDIR)/zlib && make && make install
 	echo export PATH=$(CURDIR)/zlib/bin:\$$PATH >> ${myEnv}
 
-bzip2Rule :
-#	cd bzip2 && make && make install PREFIX=$(CURDIR)/bzip2
-	cd bzip2 && make clean && make -f Makefile-libbz2_so PREFIX=$(CURDIR)/bzip2
-#	echo export PATH=$(CURDIR)/bzip2/bin:\$$PATH >> ${myEnv}
-
 tokyocabinetRule :
 	cd tokyocabinet &&./configure --prefix=$(CURDIR)/tokyocabinet ${ktlinkingflags} --disable-bzip && make && make install
 	echo export PATH=$(CURDIR)/tokyocabinet/bin:\$$PATH >> ${myEnv}
@@ -76,21 +71,18 @@ ucsc.%:
 	cd $* && make
 	echo export PATH=$(CURDIR)/$*/bin:\$$PATH >> ${myEnv}
 
-clean: lastzClean cabinetClean hdf5Clean pbsDrmaaClean zlibClean bzip2Clean ${ucsc:%=clean.%}
+clean: lastzClean cabinetClean hdf5Clean pbsDrmaaClean zlibClean ${ucscModules:%=clean.%}
 
 clean.%:
 	cd $* && make clean
 
-justUCSCClean: ${ucsc:%=justUCSCClean.%}
+justUCSCClean: ${ucscModules:%=justUCSCClean.%}
 
 justUCSCClean.%:
 	cd $* && make clean
 
 zlibClean:
 	cd zlib && make clean
-
-bzip2Clean:
-	cd bzip2 && make clean && make -f Makefile-libbz2_so clean
 
 lastzClean:
 	cd lastz && make clean
@@ -111,7 +103,7 @@ endif
 hdf5Clean:
 	cd hdf5 && make clean
 
-test: ${ucsc:%=test.%}
+test: ${ucscModules:%=test.%}
 
 test.%:
 	. ${myEnv} && cd $* && make test

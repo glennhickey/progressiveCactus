@@ -6,7 +6,7 @@ sonLibPath=${sonLibRootPath}/lib
 #OVERRIDE SONLIB WITH LOCAL DBS (because now sonlib won't redefine if exist)
 tcPrefix = $(CURDIR)/tokyocabinet
 tokyoCabinetIncl = -I ${tcPrefix}/include -DHAVE_TOKYO_CABINET=1
-tokyoCabinetLib = -L${tcPrefix}/lib -Wl,-rpath,${tcPrefix}/lib -ltokyocabinet -lz -lbz2 -lpthread -lm
+tokyoCabinetLib = -L${tcPrefix}/lib -Wl,-rpath,${tcPrefix}/lib -ltokyocabinet -lz -lpthread -lm
 
 kcPrefix =$(CURDIR)/kyotocabinet
 ttPrefix =$(CURDIR)/kyototycoon
