@@ -111,8 +111,6 @@ Location of the output alignment in HAL (Hierarchical ALignment) format.  This i
 
 ### Resuming existing jobs
 
-Progressive Cactus will try whenever possible to resume previsouly started jobs.  If it detects a jobTree/ subdirectory in the working directory with evidence of an incomplete run, it will try to use jobTree's resume functionality to pick up exactly where it left off.  If this behavior leads to problems, or is not desired, then it can be prevented by removing the jobTree subdirectory.  Casual users are advised to just remove it.
-
 If Progressive Cactus detects that some sub-alignments in the working directory have already been successfully completed, it will skip them by default.  For example, if the last attempt crashed when aligning the human-chimp ancestor to gorilla, then rerunning will not recompute the human-chimp alignment.  To force re-alignment of already-completed subalignments, use the `--overwrite` option or erase the working directory. 
 
 Progressive Cactus will always attempt to rerun the HAL exporter after alignmenet is completed.  Even if the alignment has not changed. 
