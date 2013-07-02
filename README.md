@@ -210,6 +210,8 @@ These packages are linked to via their github locations (or our mirror if they w
 * [lastz](http://www.bx.psu.edu/~rsharris/lastz/)
 * [pbs-drmaa](http://sourceforge.net/projects/pbspro-drmaa/)
 * [drmaa-python](http://code.google.com/p/drmaa-python/)
+* [clapack](http://www.netlib.org/clapack/)
+* [phast](http://compgen.bscb.cornell.edu/phast/)
 
 We thank all the authors of the above for sharing their high quality free software with the community.  
 
