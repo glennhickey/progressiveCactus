@@ -55,3 +55,9 @@
 [submodule "submodules/zlib"]
 	path = submodules/zlib
 	url = git://github.com/madler/zlib
+[submodule "submodules/clapack"]
+	path = submodules/clapack
+	url = git://github.com/UCSCReconGroup/clapack
+[submodule "submodules/phast"]
+	path = submodules/phast
+	url = git://github.com/UCSCReconGroup/phast

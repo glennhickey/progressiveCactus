@@ -53,3 +53,14 @@ ktlinkingflags =
 
 enablePBSTorque = no
 #enablePBSTorque = yes
+
+ifndef TARGETOS
+  TARGETOS := $(shell uname -s)
+endif
+
+#Turn of HAL Phast support by default (unless udc enabled)
+ifndef ENABLE_UDC
+	ENABLE_PHYLOP = 1
+else
+	ENABLE_PHYLOP =
+endif
