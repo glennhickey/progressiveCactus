@@ -213,7 +213,12 @@ These packages are linked to via their github locations (or our mirror if they w
 * [clapack](http://www.netlib.org/clapack/)
 * [phast](http://compgen.bscb.cornell.edu/phast/)
 
-We thank all the authors of the above for sharing their high quality free software with the community.  
+We thank all the authors of the above for sharing their high quality free software with the community. 
+
+#### Kent Binaries
+
+The `hal2assemblyHub.py` script for making USCSC Genome Browser Comparative Assembly Hubs is dependent on a handful of Genome Browser tools.  These are downloaded as binaries automatically for convenience during installation.  Unlike the other included dependencies (listed above), **it is forbidden to use these binaries for anything other than academic, noncommercial, and personal use without obtaining a commercial license.**  For more information, see [http://hgdownload.cse.ucsc.edu/downloads.html#source_downloads](http://hgdownload.cse.ucsc.edu/downloads.html#source_downloads).   It is therefore forbidden to run `hal2assemblyHub.py` for commercial purposes without obtaining the license to run the Kent tools.
+
 
 Citing
 ------
@@ -242,3 +247,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the [GNU General Public License](LICENSE)
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+### Exception for binaries downloaded into submodules/kentToolBinaries by Make
+
+The `hal2assemblyHub.py` script for making USCSC Genome Browser Comparative Assembly Hubs is dependent on a handful of Genome Browser tools.  These are downloaded as binaries automatically for convenience during installation.  Unlike the other included dependencies (listed above), **it is forbidden to use these binaries for anything other than academic, noncommercial, and personal use without obtaining a commercial license.**  For more information, see [http://hgdownload.cse.ucsc.edu/downloads.html#source_downloads](http://hgdownload.cse.ucsc.edu/downloads.html#source_downloads).   It is therefore forbidden to run `hal2assemblyHub.py` for commercial purposes without obtaining the license to run the Kent tools.

@@ -1,14 +1,14 @@
 include include.mk
 
-externalModules = zlib tokyocabinet kyotocabinet kyototycoon lastz hdf5 pbs-drmaa clapack phast
+externalModules = zlib tokyocabinet kyotocabinet kyototycoon lastz hdf5 pbs-drmaa clapack phast kentToolBinaries
 ucscModules = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal
 
 modules = ${externalModules} ${ucscModules}
 #modules = ${ucsc}
 
-.PHONY: all %.all justUCSC %.justUCSC envRefreshRule virtPyRule pbsDrmaaRule drmaaPythonRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule clapackRule phastRule %.ucsc clean %.clean justUCSCClean %.justUCSCClean zlibClean lastzClean cabinetClean pbsDrmaaClean hdf5Clean clapckClean phastClean test %.test datasets
+.PHONY: all %.all justUCSC %.justUCSC envRefreshRule virtPyRule pbsDrmaaRule drmaaPythonRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule clapackRule phastRule kentToolBinariesRule %.ucsc clean %.clean justUCSCClean %.justUCSCClean zlibClean lastzClean cabinetClean pbsDrmaaClean hdf5Clean clapckClean phastClean kentToolBinariesClean test %.test datasets
 
-all : envRefreshRule virtPyRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule pbsDrmaaRule drmaaPythonRule clapackRule phastRule hdf5Rule datasets ${ucscModules:%=ucsc.%}
+all : envRefreshRule virtPyRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule pbsDrmaaRule drmaaPythonRule clapackRule phastRule kentToolBinariesRule hdf5Rule datasets ${ucscModules:%=ucsc.%}
 
 justUCSC : ${ucscModules:%=ucsc.%}
 
@@ -78,6 +78,10 @@ phastRule :
 	cd .
 endif
 
+kentToolBinariesRule :
+	cd kentToolBinaries && make
+	echo export PATH=$(CURDIR)/kentToolBinaries:\$$PATH >> ${myEnv}
+
 hdf5Rule :
 	cd hdf5 &&./configure --prefix=$(CURDIR)/hdf5 --enable-cxx && make && make install
 	echo export PATH=$(CURDIR)/hdf5/bin:\$$PATH >> ${myEnv}
@@ -90,7 +94,7 @@ ucsc.%:
 	cd $* && make
 	echo export PATH=$(CURDIR)/$*/bin:\$$PATH >> ${myEnv}
 
-clean: lastzClean cabinetClean hdf5Clean pbsDrmaaClean zlibClean clapackClean phastClean ${ucscModules:%=clean.%}
+clean: lastzClean cabinetClean hdf5Clean pbsDrmaaClean zlibClean clapackClean phastClean kentToolBinariesRuleClean ${ucscModules:%=clean.%}
 
 clean.%:
 	cd $* && make clean
@@ -119,7 +123,6 @@ pbsDrmaaClean:
 	cd .
 endif
 
-
 ifneq ($(TARGETOS), Darwin)
 clapackClean :
 	cd clapack && make clean
@@ -135,6 +138,9 @@ else
 phastClean :
 	cd .
 endif
+
+kentToolBinariesClean :
+	cd kentToolBinaries && make clean
 
 hdf5Clean:
 	cd hdf5 && make clean
