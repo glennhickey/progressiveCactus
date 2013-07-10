@@ -17,7 +17,7 @@ Installation
 
 ### PBS/Torque Cluster Support
 
-In order to run on clusters with the PBS / Torque resource manager, change the `enablePBSTorque` variable at the bottom of the `submodules/include.mk` file from `no` to `yes` before running make in the instructions below (*functionality is still being tested and developed*)
+In order to run on clusters with the PBS / Torque resource manager, change the `enablePBSTorque` variable at the bottom of the `submodules/include.mk` file from `no` to `yes` before running make in the instructions below (*functionality is still being tested and developed.  (UPDATE: DISABLED INDEFINITELY)*)
 
 ### Instructions
 In the parent directory of where you want Progressive Cactus installed:
