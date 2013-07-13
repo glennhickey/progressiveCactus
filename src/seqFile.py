@@ -112,8 +112,8 @@ class SeqFile:
             self.tree.setWeight(0, label, SeqFile.branchLen)
         
     def validate(self):
-        if len([i for i in self.tree.postOrderTraversal()]) <= 2:
-            raise RuntimeError("At least two valid leaf genomes required in"
+        if len([i for i in self.tree.postOrderTraversal()]) < 2:
+            raise RuntimeError("At least two valid genomes required in"
                                " input tree")
         for node in self.tree.postOrderTraversal():
             if self.tree.isLeaf(node):
@@ -127,18 +127,20 @@ class SeqFile:
 
     # remove leaves that do not have sequence data associated with them
     def cleanTree(self):
-        numLeaves = 0
+        numFixedNodes = 0
         removeList = []
         for node in self.tree.postOrderTraversal():
-            if self.tree.isLeaf(node):
-                name = self.tree.getName(node)
-                if name not in self.pathMap:
-                    removeList.append(node)
-                numLeaves += 1
-        if numLeaves < 2:
-            raise RuntimeError("At least two valid leaf genomes required in"
+            name = self.tree.getName(node)
+            if name in self.pathMap:
+                numFixedNodes += 1
+            elif self.tree.isLeaf(node):
+                numFixedNodes += 1
+                removeList.append(node)
+
+        if numFixedNodes < 2:
+            raise RuntimeError("At least two valid genomes required in"
                                " input tree")
-        if len(removeList) == numLeaves:
+        if len(removeList) == numFixedNodes:
             raise RuntimeError("No sequence path specified for any leaves in the tree")
         for leaf in removeList:
              sys.stderr.write("No sequence path found for %s: skipping\n" % (
@@ -163,12 +165,15 @@ class SeqFile:
         assert self.tree is not None
         elem = ET.Element("cactus_workflow_experiment")
         seqString = ""
+        fixedNodes = ""
         for node in self.tree.postOrderTraversal():
-            if self.tree.isLeaf(node):
-                name = self.tree.getName(node)
+            name = self.tree.getName(node)    
+            if name in self.pathMap:
+                fixedNodes += name + " "
                 path = self.pathMap[name]
                 path.replace(" ", "\ ")
                 seqString += os.path.abspath(path) + " "
+        elem.attrib["fixedNodes"] = fixedNodes
         elem.attrib["sequences"] = seqString
         elem.attrib["species_tree"] = NXNewick().writeString(self.tree)
         elem.attrib["config"] = "defaultProgressive"
