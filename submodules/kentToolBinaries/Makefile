@@ -1,4 +1,4 @@
-kentBinDeps = wigToBigWig faToTwoBit bedToBigBed 
+kentBinDeps = wigToBigWig faToTwoBit bedToBigBed hgGcPercent
 
 ifeq ($(TARGETOS), Darwin)
 urlSubDirectory = macOSX.x86_64
