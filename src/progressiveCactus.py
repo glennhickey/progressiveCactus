@@ -270,7 +270,7 @@ def checkCactus(workDir, options):
 
 # Call cactus2hal to extract a single hal file out of the progressive
 # alignmenet in the working directory.  If the maf option was set, we
-# just move out the root maf.  
+# just move out the root maf.
 def extractOutput(workDir, outputHalFile, options):
     if options.outputMaf is not None:
         mcProj = MultiCactusProject()
@@ -298,14 +298,14 @@ def extractOutput(workDir, outputHalFile, options):
         datetime.datetime.now()))
     logHandle.close()
 
-def main():
+def main(argv):
     # init as dummy function
     cleanKtFn = lambda x,y:x
     stage = -1
     workDir = None
     try:
         parser = initParser()
-        options, args = parser.parse_args()
+        options, args = parser.parse_args(argv)
         if len(args) == 0:
             parser.print_help()
             return 1
@@ -358,4 +358,4 @@ def main():
         return -1
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(sys.argv))
