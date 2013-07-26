@@ -298,7 +298,7 @@ def extractOutput(workDir, outputHalFile, options):
         datetime.datetime.now()))
     logHandle.close()
 
-def main(argv):
+def main(argv=sys.argv[1:]):
     # init as dummy function
     cleanKtFn = lambda x,y:x
     stage = -1
@@ -358,4 +358,4 @@ def main(argv):
         return -1
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv))
+    sys.exit(main())
