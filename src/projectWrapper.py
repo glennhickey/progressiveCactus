@@ -103,6 +103,8 @@ class ProjectWrapper:
 
         if self.options.database == "kyoto_tycoon":
             self.expWrapper.setDbPort(str(self.options.ktPort))
+            if self.options.ktHost is not None:
+                self.expWrapper.setDbHost(self.options.ktHost)
             if self.options.ktType == 'memory':
                 self.expWrapper.setDbInMemory(True)
                 self.expWrapper.setDbSnapshot(False)
