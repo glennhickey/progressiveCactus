@@ -117,6 +117,12 @@ def initParser():
                        help="starting port (lower bound of range) of ktservers"
                        " [default: %default]",
                        default=1978)
+    ktGroup.add_option("--ktHost", dest="ktHost",
+                       help="The hostname to use for connections to the "
+                       "ktserver (this just specifies where nodes will attempt"
+                       " to find the server, *not* where the ktserver will be"
+                       " run)",
+                       default=None)
     ktGroup.add_option("--ktType", dest="ktType",
                        help="Kyoto Tycoon server type "
                        "(memory, snapshot, or disk)"

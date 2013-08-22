@@ -53,3 +53,10 @@ ktlinkingflags =
 
 enablePBSTorque = no
 #enablePBSTorque = yes
+
+ifndef TARGETOS
+  TARGETOS := $(shell uname -s)
+endif
+
+#phyloP support enabled by default
+ENABLE_PHYLOP = 1

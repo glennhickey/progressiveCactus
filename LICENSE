@@ -6,6 +6,20 @@ Progressive Cactus distribution under the GPL and note that the
 licenses of the constituent packages can be viewed in their
 subfolders.  
 
+*******************************************************************
+EXCEPTION:
+make will download a few binaries from the UCSC Genome Browser
+http://hgdownload.cse.ucsc.edu/downloads.html#source_downloads
+into submodules/kentToolBinaries/
+
+They are provided as a convenience and are used only by 
+hal2assemblyHub.py
+
+THEY ARE PROHIBITED TO BE RUN FOR COMMERCIAL USE.  FOR MORE
+INFORMATION SEE http://genome.ucsc.edu/license/ 
+AND submodules/kentToolBinaries/license.ucsc.genome.browser.txt
+*******************************************************************
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
