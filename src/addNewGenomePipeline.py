@@ -5,7 +5,9 @@ import networkx as NX
 from sonLib.bioio import getTempDirectory
 from sonLib.nxtree import NXTree
 from sonLib.nxnewick import NXNewick
+from hal.stats.halStats import getHalTree
 from progressiveCactus import main as progressiveCactusMain
+from cactus.progressive.multiCactusTree import MultiCactusTree
 import subprocess
 import os
 
@@ -34,19 +36,12 @@ def extractFasta(halFile, genome, outPath):
     p = subprocess.Popen(command.split())
     p.wait()
     if p.returncode:
-        sys.stderr.write("command %s failed with return code %d\n"
-                         % (command, p.returncode))
+        sys.stderr.write("command %s failed with return code %d\n" % (command,
+                                                                  p.returncode))
         sys.exit(1)
 
 def runProgressiveCactus(seqFile, outPath, extraArgs=[]):
     progressiveCactusMain(extraArgs + [seqFile, getTempDirectory(), outPath])
-
-def getTreeFromHal(halFile):
-    command = "halStats --tree %s" % halFile
-    p = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
-    newick = p.stdout.read()
-    tree = NXNewick().parseString(newick)
-    return tree
 
 def runAddToBranch(halPath, botHalPath, topHalPath, parentName, childName,
                        intermediateName, leafName, parentDist, leafDist):
@@ -81,41 +76,20 @@ def addToNode(args, extraArgs):
     pathMap[leafName] = args[5]
     leafDist = float(args[6])
 
-    origParentId = -1
-    origTree = getTreeFromHal(halFile)
-    for node in origTree.postOrderTraversal():
-        if origTree.getName(node) == parentName:
-            origParentId = node
-
-    # Find parent's other children (they need to be included in the top hal
-    # file)
-    otherChildrenIds = origTree.getChildren(origParentId)
-    otherChildren = map(origTree.getName, otherChildrenIds)
-    otherChildrenDists = map(lambda x: origTree.getWeight(origTree.getParent(x),
-                                                          x),
-                             otherChildrenIds)
-    tempDir = getTempDirectory()
-    pathMap[parentName] = os.path.join(tempDir, 'parent.fa')
-    extractFasta(halFile, parentName, pathMap[parentName])
-    for (i, child) in enumerate(otherChildren):
-        childPath = os.path.join(tempDir, 'child%d.fa' % i)
-        extractFasta(halFile, child, childPath)
-        pathMap[child] = childPath
-    # create the seqfile for realigning the subtree
-    realignSeqFilePath = os.path.join(tempDir, "realignSeqfile")
-
+    origTree = MultiCactusTree(NXNewick().parseString(getHalTree(halFile)))
+    origTree.nameUnlabeledInternalNodes()
+    origTree.computeSubtreeRoots()
     # Create the realignment subtree
-    # TODO: Can probably be done much cleaner (same with addToBranch)
-    tree = NXTree()
-    dg = NX.DiGraph()
-    dg.add_edge(0, 1, weight=leafDist)
-    for (i, child) in enumerate(otherChildren):
-        dg.add_edge(0, i + 2, weight=otherChildrenDists[i])
-    tree.loadNetworkXTree(dg)
-    tree.setName(0, parentName)
-    tree.setName(1, leafName)
-    for (i, child) in enumerate(otherChildren):
-        tree.setName(i + 2, child)
+    tempDir = getTempDirectory()
+    realignSeqFilePath = os.path.join(tempDir, "realignSeqfile")
+    tree = origTree.extractSubTree(parentName)
+    tree.addOutgroup(leafName, leafDist)
+    for node in botTree.postOrderTraversal():
+        if botTree.getName(node) == leafName:
+            continue
+        fastaPath = os.path.join(tempDir, str(node) + '.fa')
+        extractFasta(halPath, botTree.getName(node), fastaPath)
+        pathMap[botTree.getName(node)] = fastaPath
     createSeqFile(tree, pathMap, realignSeqFilePath)
     realignHalPath = os.path.join(tempDir, "realign.hal")
     runProgressiveCactus(realignSeqFilePath, realignHalPath, extraArgs)
@@ -137,7 +111,7 @@ def addToBranch(args, extraArgs):
 
     origParentId = -1
     origChildId = -1
-    origTree = getTreeFromHal(halFile)
+    origTree = MultiCactusTree(NXNewick().parseString(getHalTree(halFile)))
     for node in origTree.postOrderTraversal():
         nodeName = origTree.getName(node)
         if nodeName == parentName:

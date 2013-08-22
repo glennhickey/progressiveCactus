@@ -163,6 +163,9 @@ class ProjectWrapper:
                 expPath, projPath, fixNames)
             if len(self.seqFile.outgroups) > 0: 
                 cmd += " --outgroupNames " + ",".join(self.seqFile.outgroups)
+            if self.options.rootOutgroupDist:
+                cmd += " --rootOutgroupDist %f" % self.options.rootOutgroupDist
+                cmd += " --rootOutgroupPath %s" % self.options.rootOutgroupPath
             system(cmd)
 
     # create a project in a dummy directory.  check if the
@@ -180,6 +183,9 @@ class ProjectWrapper:
             expPath, tempPath, fixNames)
         if len(self.seqFile.outgroups) > 0: 
             cmd += " --outgroupNames " + ",".join(self.seqFile.outgroups)
+        if self.options.rootOutgroupDist:
+            cmd += " --rootOutgroupDist %f" % self.options.rootOutgroupDist
+            cmd += " --rootOutgroupPath %s" % self.options.rootOutgroupPath
         system(cmd)
         projFilePathNew = os.path.join(tempPath,'%s_temp_project.xml' %
                                        self.alignmentDirName)
