@@ -94,7 +94,7 @@ ucsc.%:
 	cd $* && make
 	echo export PATH=$(CURDIR)/$*/bin:\$$PATH >> ${myEnv}
 
-clean: lastzClean cabinetClean hdf5Clean pbsDrmaaClean zlibClean clapackClean phastClean kentToolBinariesRuleClean ${ucscModules:%=clean.%}
+clean: lastzClean cabinetClean hdf5Clean pbsDrmaaClean zlibClean clapackClean phastClean kentToolBinariesClean ${ucscModules:%=clean.%}
 
 clean.%:
 	cd $* && make clean
