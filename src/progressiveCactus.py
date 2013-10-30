@@ -65,16 +65,11 @@ def initParser():
     
     parser = OptionParser(usage=usage)
 
-    #JobTree Options
-    jtGroup = OptionGroup(parser, "JobTree Options",
-                          "JobTree is a Python framework managing parallel "
-                          "processes, used by Progressive Cactus.  These "
-                          "options can be used to tune how it works with "
-                          "your batch system.")    
-    Stack.addJobTreeOptions(jtGroup)
+    #JobTree Options (method below now adds an option group)
+    Stack.addJobTreeOptions(parser)
     #Progressive Cactus will handle where the jobtree path is
-    jtGroup.remove_option("--jobTree")
-    parser.add_option_group(jtGroup)
+    parser.remove_option("--jobTree")
+
 
     #Progressive Cactus Options
     parser.add_option("--optionsFile", dest="optionsFile",
@@ -186,7 +181,7 @@ def validateInput(workDir, outputHalFile, options):
 def getJobTreeCommands(jtPath, parser, options):
     cmds = "--jobTree %s" % jtPath
     for optGroup in parser.option_groups:
-        if optGroup.title == "JobTree Options":
+        if optGroup.title == "Jobtree Options":
             for opt in optGroup.option_list:
                 if hasattr(options, opt.dest) and \
                     getattr(options, opt.dest) != optGroup.defaults[opt.dest]:
