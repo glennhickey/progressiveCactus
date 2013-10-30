@@ -46,7 +46,7 @@ from jobTree.src.master import getJobFileDirName, getConfigFileName
 from jobTree.src.jobTreeStatus import parseJobFiles
 
 from cactus.progressive.multiCactusProject import MultiCactusProject
-from cactus.progressive.experimentWrapper import ExperimentWrapper
+from cactus.shared.experimentWrapper import ExperimentWrapper
 from cactus.progressive.configWrapper import ConfigWrapper
 
 from seqFile import SeqFile

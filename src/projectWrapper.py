@@ -35,8 +35,8 @@ import socket
 from sonLib.bioio import system
 
 from seqFile import SeqFile
-from cactus.progressive.experimentWrapper import ExperimentWrapper
-from cactus.progressive.experimentWrapper import DbElemWrapper
+from cactus.shared.experimentWrapper import ExperimentWrapper
+from cactus.shared.experimentWrapper import DbElemWrapper
 from cactus.progressive.configWrapper import ConfigWrapper
 from cactus.shared.common import cactusRootPath
 
@@ -125,6 +125,15 @@ class ProjectWrapper:
             if self.options.ktOpenTuning is not None:
                 self.expWrapper.setDbReadTuningOptions(
                     self.options.ktOpenTuning)
+        
+        #set the sequence output directory
+        outSeqDir = os.path.join(self.workingDir, "sequenceData")
+        if os.path.exists(outSeqDir) and self.options.overwrite:
+            system("rm -rf %s" % outSeqDir)
+        if not os.path.exists(outSeqDir):
+            system("mkdir %s" % outSeqDir)
+        self.expWrapper.setOutputSequenceDir(os.path.join(self.workingDir, 
+                                                          "sequenceData"))
 
     def writeXml(self):
         assert os.path.isdir(self.workingDir)
