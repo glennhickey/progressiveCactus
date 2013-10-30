@@ -37,7 +37,7 @@ from sonLib.bioio import system
 from seqFile import SeqFile
 from cactus.shared.experimentWrapper import ExperimentWrapper
 from cactus.shared.experimentWrapper import DbElemWrapper
-from cactus.progressive.configWrapper import ConfigWrapper
+from cactus.shared.configWrapper import ConfigWrapper
 from cactus.shared.common import cactusRootPath
 
 
