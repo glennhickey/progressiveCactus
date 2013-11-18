@@ -191,7 +191,7 @@ Credits
 
 Progressive Cactus was developed in [*David Haussler*'s lab at UCSC](http://www.cbse.ucsc.edu/people/hausslerlab).  
 
-* Progressive Cactus and HAL: *Glenn Hickey* hickey@soe.ucsc.edu
+* Progressive Cactus and HAL: *Glenn Hickey* hickey@soe.ucsc.edu, *Joel Armstrong* jcarmstr@ucsc.edu and *Ngan Nguyen* nknguyen@soe.ucsc.edu
 * Cactus algorithm and JobTree: *Benedict Paten* benedict@soe.ucsc.edu
 
 #### External Packages redistributed as git submodules
