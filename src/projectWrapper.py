@@ -63,9 +63,9 @@ class ProjectWrapper:
         if self.options.configFile is not None:
             configPath = self.options.configFile
         else:
-            dir = os.path.join(cactusRootPath(), "progressive")
+            dir = cactusRootPath()
             configPath = os.path.join(dir,
-                                      "cactus_progressive_workflow_config.xml")
+                                      "cactus_progressive_config.xml")
         configXml = ET.parse(configPath).getroot()
         self.configWrapper = ConfigWrapper(configXml)
         # here we can go through the options and apply some to the config

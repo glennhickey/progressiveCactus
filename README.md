@@ -120,7 +120,7 @@ Progressive Cactus will always attempt to rerun the HAL exporter after alignmene
 
 **`--configFile=CONFIGFILE`**
 
-Location of progressive cactus configuration file in XML format.  The default configuration file can be found in `progressiveCactus/submodules/cactus/progressive/cactus_progressive_workflow_config.xml`.  These parameters are currently undocumented so modify at your own risk.
+Location of progressive cactus configuration file in XML format.  The default configuration file can be found in `progressiveCactus/submodules/cactus/cactus_progressive_config.xml`.  These parameters are currently undocumented so modify at your own risk.
 
 **`--database=DATABASE`**
 
