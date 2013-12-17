@@ -1,14 +1,14 @@
 include include.mk
 
-externalModules = zlib tokyocabinet kyotocabinet kyototycoon lastz hdf5 pbs-drmaa clapack phast kentToolBinaries
+externalModules = zlib tokyocabinet kyotocabinet kyototycoon hdf5 pbs-drmaa clapack phast kentToolBinaries
 ucscModules = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal
 
 modules = ${externalModules} ${ucscModules}
 #modules = ${ucsc}
 
-.PHONY: all %.all justUCSC %.justUCSC envRefreshRule virtPyRule pbsDrmaaRule drmaaPythonRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule clapackRule phastRule kentToolBinariesRule %.ucsc clean %.clean justUCSCClean %.justUCSCClean zlibClean lastzClean cabinetClean pbsDrmaaClean hdf5Clean clapckClean phastClean kentToolBinariesClean test %.test datasets
+.PHONY: all %.all justUCSC %.justUCSC envRefreshRule virtPyRule pbsDrmaaRule drmaaPythonRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule hdf5Rule clapackRule phastRule kentToolBinariesRule %.ucsc clean %.clean justUCSCClean %.justUCSCClean zlibClean cabinetClean pbsDrmaaClean hdf5Clean clapckClean phastClean kentToolBinariesClean test %.test datasets
 
-all : envRefreshRule virtPyRule lastzRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule pbsDrmaaRule drmaaPythonRule clapackRule phastRule kentToolBinariesRule hdf5Rule datasets ${ucscModules:%=ucsc.%}
+all : envRefreshRule virtPyRule zlibRule tokyocabinetRule kyotocabinetRule kyototycoonRule pbsDrmaaRule drmaaPythonRule clapackRule phastRule kentToolBinariesRule hdf5Rule datasets ${ucscModules:%=ucsc.%}
 
 justUCSC : ${ucscModules:%=ucsc.%}
 
@@ -37,10 +37,6 @@ pbsDrmaaRule :
 drmaaPythonRule :
 	cd . 
 endif
-
-lastzRule :
-	cd lastz && make
-	echo export PATH=$(CURDIR)/lastz/src:$(CURDIR)/lastz/tools:\$$PATH >> ${myEnv}
 
 zlibRule :
 	cd zlib && ./configure --prefix=$(CURDIR)/zlib && make && make install
@@ -94,7 +90,7 @@ ucsc.%:
 	cd $* && make
 	echo export PATH=$(CURDIR)/$*/bin:\$$PATH >> ${myEnv}
 
-clean: lastzClean cabinetClean hdf5Clean pbsDrmaaClean zlibClean clapackClean phastClean kentToolBinariesClean ${ucscModules:%=clean.%}
+clean: cabinetClean hdf5Clean pbsDrmaaClean zlibClean clapackClean phastClean kentToolBinariesClean ${ucscModules:%=clean.%}
 
 clean.%:
 	cd $* && make clean
@@ -106,9 +102,6 @@ justUCSCClean.%:
 
 zlibClean:
 	cd zlib && make clean
-
-lastzClean:
-	cd lastz && make clean
 
 cabinetClean:
 	cd kyotocabinet && make clean
