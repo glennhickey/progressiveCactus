@@ -25,9 +25,6 @@
 [submodule "submodules/tokyocabinet"]
 	path = submodules/tokyocabinet
 	url = git://github.com/UCSCReconGroup/tokyocabinet.git
-[submodule "submodules/lastz"]
-	path = submodules/lastz
-	url = git://github.com/UCSCReconGroup/lastz.git
 [submodule "submodules/hdf5"]
 	path = submodules/hdf5
 	url = git://github.com/UCSCReconGroup/hdf5.git
