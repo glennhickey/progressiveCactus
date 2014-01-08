@@ -11,6 +11,7 @@ Installation
 * git
 * gcc 4.2 or newer
 * python 2.7
+* wget
 * 64bit processor and build environment
 * Parasol or SGE or Torque (see below) for cluster support.
 * 750M disk space

@@ -18,6 +18,8 @@ mysqlIncl =
 mysqlLibs = -lm
 
 include  ${sonLibRootPath}/include.mk
+# copy over form sonlib so modules work with mavericks (namely kyoto cabinet)
+CXX=${cpp}
 
 dataSetsPath=/Users/benedictpaten/Dropbox/Documents/work/myPapers/genomeCactusPaper/dataSets
 
@@ -58,5 +60,10 @@ ifndef TARGETOS
   TARGETOS := $(shell uname -s)
 endif
 
-#phyloP support enabled by default
-ENABLE_PHYLOP = 1
+#phyloP support enabled by default except on Mavericks, under which it won't build
+#(same test as used in sonLib/include.mk)
+ifneq ($(wildcard /usr/bin/clang),) 
+	ENABLE_PHYLOP = 
+else
+	ENABLE_PHYLOP = 1
+endif
