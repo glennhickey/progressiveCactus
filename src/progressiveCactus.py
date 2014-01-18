@@ -102,6 +102,12 @@ def initParser():
                       help="Re-align nodes in the tree that have already" +
                       " been successfully aligned.",
                       default=False)
+    parser.add_option("--rootOutgroupDist", dest="rootOutgroupDist", type=float,
+                      help="root outgroup distance (--rootOutgroupPath must " +
+                      "be given as well)", default=None)
+    parser.add_option("--rootOutgroupPath", dest="rootOutgroupPath", type=str,
+                      help="root outgroup path (--rootOutgroup must be given " +
+                      "as well)", default=None)
 
     #Kyoto Tycoon Options
     ktGroup = OptionGroup(parser, "kyoto_tycoon Options",
@@ -252,7 +258,6 @@ def runCactus(workDir, jtCommands, jtPath, options):
                                                                  pjPath,
                                                                  overwriteFlag,
                                                                  logFile)
-
     jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile,
                                  deadlockCallbackFn=abortFunction(jtPath,
                                                                   options))
@@ -307,6 +312,10 @@ def main():
     try:
         parser = initParser()
         options, args = parser.parse_args()
+        if (options.rootOutgroupDist is not None) \
+        ^ (options.rootOutgroupPath is not None):
+            parser.error("--rootOutgroupDist and --rootOutgroupPath must be " +
+                         "provided together")
         if len(args) == 0:
             parser.print_help()
             return 1
