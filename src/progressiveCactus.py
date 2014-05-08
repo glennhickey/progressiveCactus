@@ -343,7 +343,7 @@ def main():
         projWrapper.writeXml()
         jtCommands = getJobTreeCommands(jtPath, parser, options)
         runCactus(workDir, jtCommands, jtPath, options)
-        cmd = 'jobTreeStatus --failIfNotComplete --jobTree %s &> /dev/null' %\
+        cmd = 'jobTreeStatus --failIfNotComplete --jobTree %s > /dev/null 2>&1 ' %\
               jtPath
         system(cmd)
 
