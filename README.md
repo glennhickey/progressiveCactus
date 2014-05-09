@@ -13,14 +13,13 @@ Installation
 * python 2.7
 * wget
 * 64bit processor and build environment
-* Parasol or SGE or Torque (see below) for cluster support.
+* 15GB+ of memory on at least one machine when aligning mammal-sized genomes; less memory is needed for smaller genomes.
+* Parasol or SGE for cluster support.
 * 750M disk space
 
-### PBS/Torque Cluster Support
-
-In order to run on clusters with the PBS / Torque resource manager, change the `enablePBSTorque` variable at the bottom of the `submodules/include.mk` file from `no` to `yes` before running make in the instructions below (*functionality is still being tested and developed.  (UPDATE: DISABLED INDEFINITELY)*)
-
 ### Instructions
+Installing
+-----
 In the parent directory of where you want Progressive Cactus installed:
 
     git clone git://github.com/glennhickey/progressiveCactus.git
@@ -31,14 +30,14 @@ In the parent directory of where you want Progressive Cactus installed:
 
 It is also convenient to add the location of `progressiveCactus/bin` to your PATH environment variable.  In order to run the included tools (ex hal2maf) in the submodules/ directory structure, first source `progressiveCactus/environment` to load the installed environment.
 
-If any errors occur during the build process, you are unlikely to be able to use the tool.
+If any errors occur during the build process, you are unlikely to be able to use the tool. Please submit a GitHub issue so we can help out: not only will you help yourself, but others who wish to use the tool as well.
 
-*Note that all dependencies are also built and included in the submodules/ directory.  This increases the size and build time but greatly simplifies installation and version management.  The installation does not create or modify any files outside the progressiveCactus/ directory. *  
+*Note that all dependencies are also built and included in the submodules/ directory.  This increases the size and build time but greatly simplifies installation and version management.  The installation does not create or modify any files outside the progressiveCactus/ directory.*
 
 Updating the distribution
 -----
 
-To update a progressiveCactus instllation run the following:
+To update a progressiveCactus installation, run the following:
 
     cd progressiveCactus
     git pull
@@ -47,6 +46,14 @@ To update a progressiveCactus instllation run the following:
     make
 
 This will update the installation and all the submodules it contains.
+
+Using the progressiveCactus environment
+-----
+In order to avoid incompatibilities between python versions, and other libraries it depends on, progressiveCactus creates a virtual environment that must be loaded to use any of the tools in the package, except the aligner. Loading this environment temporarily modifies your session's PATH, PYTHONPATH, and other environment variables so that you're able to use the tools more easily.
+
+To load this environment, run `source environment`, or, for non-bash shells, `. environment` in the main progressiveCactus directory.
+
+To disable the environment, run `deactivate`. It's necessary to disable the environment before rebuilding progressiveCactus.
 
 Running the aligner
 -----
@@ -76,7 +83,6 @@ An optional * can be placed at the beginning of a name to specify that its assem
 * The tree, if specified, must be on a single line.  All leaves must be labeled and these labels must be unique.  Labels should not contain any spaces.
 * Branch lengths that are not specified are assumed to be 1
 * Lines beginning with # are ignored. 
-* Sequence names beginning with *
 * Sequence paths must point to either a FASTA file or a directory containing 1 or more FASTA files.
 * Sequence paths must not contain spaces.
 * Sequence paths that are not referred to in the tree are ignored
@@ -87,7 +93,7 @@ An optional * can be placed at the beginning of a name to specify that its assem
 Example:
      
 	  # Sequence data for progressive alignment of 4 genomes
-	  # human, chimp and gorilla a flagged as good asseblies.  
+	  # human, chimp and gorilla are flagged as good assemblies.  
 	  # since orang isn't, it will not be used as an outgroup species.
      (((human:0.006,chimp:0.006667):0.0022,gorilla:0.008825):0.0096,orang:0.01831);
      *human /data/genomes/human/human.fa
@@ -95,10 +101,9 @@ Example:
      *gorilla /data/genomes/gorilla/gorilla.fa
      orang /cluster/home/data/orang/
      
-The sequences for each species are named by their fasta headers. To avoid ambiguity these headers must
-be unique. Additionally, by default we remove all non-alphanumeric characters from fasta headers, and it is the resulting single
-word alphanumeric string that must be unique. We do this to ensure compatibility with visualisation tools, e.g. the UCSC browser. 
-To disable this behaviour remove the first preprocessor tag from the config.xml file that you use.
+The sequences for each species are named by their fasta headers. To avoid ambiguity, the first word of each header must
+be unique within its genome. Additionally, by default we check that the header is alphanumeric. We do this to ensure compatibility with visualisation tools, e.g. the UCSC browser. 
+To disable this behaviour, remove the first preprocessor tag from the config.xml file that you use.
 
 **`<workDir>`**
 
@@ -114,18 +119,13 @@ Location of the output alignment in HAL (Hierarchical ALignment) format.  This i
 
 If Progressive Cactus detects that some sub-alignments in the working directory have already been successfully completed, it will skip them by default.  For example, if the last attempt crashed when aligning the human-chimp ancestor to gorilla, then rerunning will not recompute the human-chimp alignment.  To force re-alignment of already-completed subalignments, use the `--overwrite` option or erase the working directory. 
 
-Progressive Cactus will always attempt to rerun the HAL exporter after alignmenet is completed.  Even if the alignment has not changed. 
-
+Progressive Cactus will always attempt to rerun the HAL exporter after alignmenet is completed, even if the alignment has not changed.
 
 #### General Options
 
 **`--configFile=CONFIGFILE`**
 
 Location of progressive cactus configuration file in XML format.  The default configuration file can be found in `progressiveCactus/submodules/cactus/cactus_progressive_config.xml`.  These parameters are currently undocumented so modify at your own risk.
-
-**`--database=DATABASE`**
-
-Select the type of database from either `tokyo_cabinet` or `kyoto_tycoon` (see below).  `kyoto_tycoon` is necessary to obtain speedup from most types of parallelism and therefore recommended for larger alignments.  `tokyo_cabinet` is simpler as no server processes are created but is only useful for testing the basic installation on small examples.
 
 **`--legacy`**
 
@@ -139,31 +139,26 @@ Abort automatically when jobTree monitor suspects a deadlock by deleting the job
 
 Re-align nodes in the tree that have already been successfully aligned.
 
-### Database Options
-
-During alignment, a cactus graph is built and maintained in a database.  Two types of databasese are supported for this task: Tokyo Cabinet and Kyoto Tycoon.  They are freely available from [Fal Labs](http://fallabs.com/) and mirrored in the Progressive Cactus installation directory. 
-
-####Kyoto Tycoon
-
-Available by default (orwith the `--database kyoto_tycoon`) command line option.  Kyoto Tycoon databases are kept *in memory* and are accessed via a client-server model.  Both parallel reads and writes are supported.   It is best to leave all the Kyoto Tycoon-related options (`--kt*`) alone unless you are an expert.  
-
-*The scripts do their best to clean them up, but it is possible that trailing ktserver daemons linger after certain crash situations.  One way to clear them is to delete the contents of `workdDir/jobTree`
-
-####Tokyo Cabinet
-
-This is the simplest option.  The cactus graphs are stored on disk (in `<workDir>`).  Since parallel write access is limited, Tokyo Cabinet is only practical for very small test alignments.
-
-
 ### JobTree Options and Running on the Cluster
 
-(to do)
+#### Running with more threads on a single machine
+If you're running on a single machine, you can give your alignment run additional threads by supplying the `--maxThreads <N>` option to the aligner. The default is 4, so if you're running anything sizable, you'll definitely want to increase this!
+
+#### Running on a cluster batch system
+Currently, the cluster systems Parasol and Sun GridEngine are supported. PBS/Torque support has stalled. If you're interested in using PBS/Torque, let us know.
+
+Hopefully, your cluster setup has at least one beefy machine with lots of RAM, and several additional compute nodes, which may have less RAM and/or compute power. In this case, you'll want to run progressiveCactus so that it runs the initial alignment (blast) and alignment refinement (bar) stages, which are highly parallelizable, on the cluster, and keep the cactus DB on a central server. A decent starting point for options to provide to the aligner is:
+
+    --batchSystem <clusterSystem> --bigBatchSystem singleMachine --defaultMemory 8589934593 --bigMemoryThreshold 8589934592 --bigMaxMemory 893353197568 --bigMaxCpus 25 --maxThreads 25 --retryCount 3
+
+where `<clusterSystem>` is either `parasol` or `gridengine`.
 
 For more details, please see the [Jobtree Manual](https://github.com/benedictpaten/jobTree/blob/master/README.md).
 
 Examples
 ------
 
-Test data can be found in `progressiveCactus/submodules/cactusTestData`.  Example input sequence files are in `progressiveCactus/examples`
+Test data can be found in `progressiveCactus/submodules/cactusTestData`.  Example input sequence files are in `progressiveCactus/examples`.
 
 *We assume unless otherwise specified that all commands are run from the `progressiveCactus/` installation directory.  This is primarily important because some of the example data contains relative paths*
 
@@ -185,7 +180,7 @@ Align the small Blanchette alignment
 HAL Tools
 -----
 
-Please see the [HAL Manual](https://github.com/glennhickey/hal/blob/master/README.md).  Note that all binaries are found in `progressiveCactus/submodules/hal/bin` and should be run after calling `source ./environment`
+The HAL tools and API let you examine your alignment after it's complete. Please see the [HAL Manual](https://github.com/glennhickey/hal/blob/master/README.md).  Note that all binaries are found in `progressiveCactus/submodules/hal/bin` and should be run after calling `source ./environment`
 
 Credits
 ------
