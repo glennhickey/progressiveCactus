@@ -20,6 +20,9 @@ Installation
 ### Instructions
 Installing
 -----
+
+**IMPORTANT NOTE: Progressive Cactus does not presently support installation into paths that contain spaces.  Until this is resolved, you can use a softlink as a workaround: ln -s "path with spaces" "installation path without spaces"**
+
 In the parent directory of where you want Progressive Cactus installed:
 
     git clone git://github.com/glennhickey/progressiveCactus.git
