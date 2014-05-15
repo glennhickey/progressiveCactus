@@ -32,7 +32,7 @@ import imp
 import string
 import socket
 
-from sonLib.bioio import system
+from sonLib.bioio import system, absSymPath
 
 from seqFile import SeqFile
 from cactus.shared.experimentWrapper import ExperimentWrapper
@@ -137,9 +137,9 @@ class ProjectWrapper:
 
     def writeXml(self):
         assert os.path.isdir(self.workingDir)
-        configPath = os.path.abspath(
+        configPath = absSymPath(
             os.path.join(self.workingDir, "config.xml"))
-        expPath = os.path.abspath(
+        expPath = absSymPath(
             os.path.join(self.workingDir, "expTemplate.xml"))
         self.expWrapper.setConfigPath(configPath)
         self.configWrapper.writeXML(configPath)
@@ -168,7 +168,7 @@ class ProjectWrapper:
                              "force restart from scratch.\n")
                logFile.close()
         else:
-            cmd = "cactus_createMultiCactusProject.py %s %s --fixNames=%d" % (
+            cmd = "cactus_createMultiCactusProject.py \"%s\" \"%s\" --fixNames=%d" % (
                 expPath, projPath, fixNames)
             if len(self.seqFile.outgroups) > 0: 
                 cmd += " --outgroupNames " + ",".join(self.seqFile.outgroups)

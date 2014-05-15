@@ -31,6 +31,7 @@ from optparse import OptionGroup
 import imp
 import string
 
+from sonLib.bioio import absSymPath
 from sonLib.nxtree import NXTree
 from sonLib.nxnewick import NXNewick
 
@@ -168,7 +169,7 @@ class SeqFile:
                 name = self.tree.getName(node)
                 path = self.pathMap[name]
                 path.replace(" ", "\ ")
-                seqString += os.path.abspath(path) + " "
+                seqString += absSymPath(path) + " "
         elem.attrib["sequences"] = seqString
         elem.attrib["species_tree"] = NXNewick().writeString(self.tree)
         elem.attrib["config"] = "defaultProgressive"
