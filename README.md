@@ -226,6 +226,8 @@ Target
 
 The total wall-clock runtime was around 17 hours (**17h10m17s**) and the total computation time was only just over 4 days (**4days11h32m1s**). 
 
+One important final issue to note, progressive cactus is reasonably able to align genome assemblies consisting of 1000s or even hundreds of 1000s of contigs/scaffolds. The number of sequences should not significantly alter the runtimes (the mammalian genomes included an assembly with more than 50k scaffolds), though it may somewhat expand the resulting HAL file size.
+
 Examples
 ------
 
