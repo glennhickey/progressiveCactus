@@ -158,7 +158,7 @@ where `<clusterSystem>` is either `parasol` or `gridengine`.
 
 For more details, please see the [Jobtree Manual](https://github.com/benedictpaten/jobTree/blob/master/README.md).
 
-Computation Time & Memmory Usage
+Computation Time & Memory Usage
 ------
 
 This code is under constant development and contains numerous different algorithms making a static assessment on computation time and memory usage difficult. However, to demonstrate the performance of progressiveCactus in practice the following is output from [jobTreeStats](https://github.com/benedictpaten/jobTree#running-and-examining-a-jobtree-script) for analysing the runtime for aligning 5 mammalian genomes:
