@@ -13,7 +13,7 @@ Installation
 * python 2.7
 * wget
 * 64bit processor and build environment
-* 15GB+ of memory on at least one machine when aligning mammal-sized genomes; less memory is needed for smaller genomes.
+* 150GB+ of memory on at least one machine when aligning mammal-sized genomes; less memory is needed for smaller genomes.
 * Parasol or SGE for cluster support.
 * 750M disk space
 
@@ -157,6 +157,76 @@ Hopefully, your cluster setup has at least one beefy machine with lots of RAM, a
 where `<clusterSystem>` is either `parasol` or `gridengine`.
 
 For more details, please see the [Jobtree Manual](https://github.com/benedictpaten/jobTree/blob/master/README.md).
+
+Computation Time & Memory Usage
+------
+
+This code is under constant development and contains numerous different algorithms making a static assessment on computation time and memory usage difficult. However, to demonstrate the performance of progressiveCactus in practice the following is output from [jobTreeStats](https://github.com/benedictpaten/jobTree#running-and-examining-a-jobtree-script) for analysing the runtime for aligning 5 mammalian genomes:
+
+```
+[benedict@hgwdev tempProgressiveCactusAlignment]$ jobTreeStats --jobTree ./jobTree --pretty --sortCategory=time --sortField=total --sortReverse
+Batch System: parasol
+Default CPU: 1  Default Memory: 8.0G
+Job Time: 30s  Max CPUs: 9.22337e+18  Max Threads: 25
+Total Clock: 11m6s  Total Runtime: 20h11m51s
+Slave
+    Count |                                                     Time* |                                                      Clock |                                                    Wait |                                   Memory 
+        n |       min      med      ave      max               total* |       min      med      ave      max                 total |      min     med      ave      max                total |      min     med     ave     max   total 
+   270051 |        0s      96s    2m37s 16h52m7s 70weeks2days1h20m56s |        0s      95s    2m32s   5h5m9s 67weeks6days15h46m27s |       0s      1s       5s 16h52m6s 2weeks3days10h52m47s |    23.6M   23.6M   52.5M    8.0G   13.5T
+Target
+    Count |                                                     Time* |                                                      Clock |                                                    Wait |                                   Memory 
+        n |       min      med      ave      max               total* |       min      med      ave      max                 total |      min     med      ave      max                total |      min     med     ave     max   total 
+   292627 |        0s      90s    2m23s 16h52m7s 69weeks3days6h48m59s |        0s      89s    2m20s   5h5m2s  67weeks6days14h4m37s |       0s      0s       3s 16h52m6s   1week5days21h6m54s |    23.6M   23.6M   89.2M    8.0G   24.9T
+ RunBlast
+    Count |                                                     Time* |                                                      Clock |                                                    Wait |                                   Memory 
+        n |       min      med      ave      max               total* |       min      med      ave      max                 total |      min     med      ave      max                total |      min     med     ave     max   total 
+   230963 |        2s      95s     116s    12m2s  44weeks3days2h22m1s |        3s      94s     115s   11m50s   44weeks1day9h48m11s |       0s      0s       1s     2m4s        3days8h29m58s |    23.6M   23.6M   23.6M   23.6M    5.2T
+ PreprocessChunk
+    Count |                                                     Time* |                                                      Clock |                                                    Wait |                                   Memory 
+        n |       min      med      ave      max               total* |       min      med      ave      max                 total |      min     med      ave      max                total |      min     med     ave     max   total 
+     9413 |       34s   17m15s   17m11s   37m48s    16weeks0day9h4m6s |       33s   16m53s   16m50s    37m0s  15weeks5days3h18m26s |       0s     15s      20s    2m28s        2days5h45m58s |    24.7M   24.8M   24.8M   32.3M  227.6G
+ CactusBarWrapper
+    Count |                                                     Time* |                                                      Clock |                                                    Wait |                                   Memory 
+        n |       min      med      ave      max               total* |       min      med      ave      max                 total |      min     med      ave      max                total |      min     med     ave     max   total 
+    10381 |        0s    4m45s    5m57s   40m42s  6weeks0day23h35m39s |        0s    4m17s    5m38s   40m15s  5weeks5days16h21m45s |       0s     15s      19s     2m9s        2days7h13m53s |    34.3M   34.4M   41.5M  455.4M  420.6G
+    ...
+```
+
+You'll see it took about a day of wall-clock time (**Total Runtime: 20h11m51s**) and just under 100 CPU days per genome aligned (**70weeks2days1h20m56s / 5 ~= 98 days**). This was run on a shared compute cluster with 1000 CPUs (actual usage was generally lower than 1000) and, for the large memory jobs, a machine with 64 CPUs and 1TB of RAM. The largest Target used around 100GB of ram, and total peak memory usage on the large memory machine was ~250GB of ram.
+
+The dominent "Target" (that is the wrapper for a job in [jobTree](https://github.com/benedictpaten/jobTree/)) in terms of runtime was computing local alignments with [LastZ](http://www.bx.psu.edu/~rsharris/lastz/) for the CAF algorithm of Cactus (see the original [Cactus alignment paper](http://www.ncbi.nlm.nih.gov/pubmed/21665927) for a description), followed by steps to rigourlessly repeat mask the input genomes (the PreprocessChunk target stats), followed by the BAR algorithm steps (also described in that same paper). 
+
+In terms of asymptotic scaling, progressive cactus will scale linearly in the number of input genomes, provided a phylogenetic tree is provided. If no tree is provided, or the tree is poorly resolved (e.g. a near star tree) then scaling is quadratic in the number of input genomes. In terms of input genome length scaling is approximately quadratic for megabase to gigabase genomes, but with the small coefficients associated with an efficient BLAST algorithm. For example, to align 66 E. coli/Shigella genomes without a phylogenetic tree, whose median length is only around 5 megabases is substantially quicker, despite the number of genomes:
+
+```
+]$ jobTreeStats --jobTree ./jobTree --pretty --sortCategory=time --sortField=total --sortReverse
+Batch System: parasol
+Default CPU: 1  Default Memory: 8.0G
+Job Time: 30s  Max CPUs: 9.22337e+18  Max Threads: 25
+Total Clock: 5m12s  Total Runtime: 17h10m17s
+Slave
+    Count |                                                  Time* |                                                   Clock |                                         Wait |                                   Memory 
+        n |        min       med       ave       max        total* |        min       med       ave       max          total |      min     med      ave      max     total |      min     med     ave     max   total 
+      349 |         0s    11m29s    18m29s  17h9m51s 4days11h32m1s |         0s    10m24s    14m12s 11h56m30s 3days10h38m29s |       0s      4s    4m16s 17h9m51s 24h53m47s |       0K      0K      0K      0K      0K
+Target
+ Slave Jobs   |     min    med    ave    max
+              |       1      1      1      1
+    Count |                                                  Time* |                                                   Clock |                                         Wait |                                   Memory 
+        n |        min       med       ave       max        total* |        min       med       ave       max          total |      min     med      ave      max     total |      min     med     ave     max   total 
+      824 |         0s        1s     7m49s  17h9m51s 4days11h29m8s |         0s        0s      6m1s 11h56m30s  3days10h38m9s |       0s      0s     108s 17h9m51s 24h51m50s |       0K      0K      0K      0K      0K
+ RunBlast
+    Count |                                                  Time* |                                                   Clock |                                         Wait |                                   Memory 
+        n |        min       med       ave       max        total* |        min       med       ave       max          total |      min     med      ave      max     total |      min     med     ave     max   total 
+       91 |       9m9s     23m9s    23m24s    43m35s 1day11h30m17s |      7m23s     22m1s    21m56s    38m35s    1day9h16m2s |       0s     61s      88s     5m0s  2h14m14s |       0K      0K      0K      0K      0K
+ CactusBarEndAlignerWrapper
+    Count |                                                  Time* |                                                   Clock |                                         Wait |                                   Memory 
+        n |        min       med       ave       max        total* |        min       med       ave       max          total |      min     med      ave      max     total |      min     med     ave     max   total 
+       69 |     17m39s    21m50s    22m55s    41m11s  1day2h21m26s |      15m8s    20m22s    20m57s    40m42s       24h6m20s |      17s     60s     117s    5m51s   2h15m5s |       0K      0K      0K      0K      0K
+```
+
+The total wall-clock runtime was around 17 hours (**17h10m17s**) and the total computation time was only just over 4 days (**4days11h32m1s**). 
+
+One important final issue to note, progressive cactus is reasonably able to align genome assemblies consisting of 1000s or even hundreds of 1000s of contigs/scaffolds. The number of sequences should not significantly alter the runtimes (the mammalian genomes included an assembly with more than 50k scaffolds), though it may somewhat expand the resulting HAL file size.
 
 Examples
 ------
