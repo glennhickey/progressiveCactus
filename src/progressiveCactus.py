@@ -187,7 +187,7 @@ def validateInput(workDir, outputHalFile, options):
 def getJobTreeCommands(jtPath, parser, options):
     cmds = "--jobTree %s" % jtPath
     for optGroup in parser.option_groups:
-        if optGroup.title.startswith("jobTree"):
+        if optGroup.title.startswith("jobTree") or optGroup.title.startswith("Jobtree"):
             for opt in optGroup.option_list:
                 if hasattr(options, opt.dest) and \
                     getattr(options, opt.dest) != optGroup.defaults[opt.dest]:
