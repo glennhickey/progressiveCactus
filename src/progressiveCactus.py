@@ -102,10 +102,10 @@ def initParser():
                       help="Re-align nodes in the tree that have already" +
                       " been successfully aligned.",
                       default=False)
-    parser.add_option("--rootOutgroupDist", dest="rootOutgroupDist", type=float,
-                      help="root outgroup distance (--rootOutgroupPath must " +
+    parser.add_option("--rootOutgroupDists", dest="rootOutgroupDists",
+                      help="root outgroup distance (--rootOutgroupPaths must " +
                       "be given as well)", default=None)
-    parser.add_option("--rootOutgroupPath", dest="rootOutgroupPath", type=str,
+    parser.add_option("--rootOutgroupPaths", dest="rootOutgroupPaths", type=str,
                       help="root outgroup path (--rootOutgroup must be given " +
                       "as well)", default=None)
 
@@ -312,9 +312,9 @@ def main():
     try:
         parser = initParser()
         options, args = parser.parse_args()
-        if (options.rootOutgroupDist is not None) \
-        ^ (options.rootOutgroupPath is not None):
-            parser.error("--rootOutgroupDist and --rootOutgroupPath must be " +
+        if (options.rootOutgroupDists is not None) \
+        ^ (options.rootOutgroupPaths is not None):
+            parser.error("--rootOutgroupDists and --rootOutgroupPaths must be " +
                          "provided together")
         if len(args) == 0:
             parser.print_help()
