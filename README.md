@@ -270,6 +270,7 @@ These packages are linked to via their github locations (or our mirror if they w
 * [Virtual Env](http://www.virtualenv.org/en/latest/index.html)
 * [networkx](http://networkx.lanl.gov/)
 * [psutil](http://code.google.com/p/psutil/)
+* [biopython](http://http://biopython.org/)
 * [bzip2](http://www.bzip.org/)
 * [zlib](http://www.zlib.net/)
 * [Kyoto Tycoon](http://fallabs.com/kyototycoon/)
