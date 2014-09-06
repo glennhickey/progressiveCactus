@@ -58,7 +58,7 @@ from projectWrapper import ProjectWrapper
 ###############################################################################
 class JobStatusMonitor(Thread):
     def __init__(self, jobTreePath, projectPath, logPath, pollTime=600,
-                 deadlockTime=3600, deadlockCallbackFn=None):
+                 deadlockTime=14400, deadlockCallbackFn=None):
         Thread.__init__(self)
         self.jobTreePath = jobTreePath
         self.projectPath = projectPath
