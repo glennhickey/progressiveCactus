@@ -46,6 +46,8 @@ zlibRule :
 tokyocabinetRule :
 	cd tokyocabinet &&./configure --prefix=$(PWD)/tokyocabinet ${ktlinkingflags} --disable-bzip && make && make install
 	echo export PATH=$(PWD)/tokyocabinet/bin:\$$PATH >> ${myEnv}
+	echo export tokyoCabinetIncl=\"-I$(PWD)/tokyocabinet/include -DHAVE_TOKYO_CABINET=1\" >> ${myEnv}
+	echo export tokyoCabinetLib=\"-L$(PWD)/tokyocabinet/lib -Wl,-rpath,$(PWD)/tokyocabinet/lib -ltokyocabinet -lz -lbz2 -lpthread -lm\" >> ${myEnv}
 
 kyotocabinetRule :
 	cd kyotocabinet &&./configure --prefix=$(PWD)/kyotocabinet ${ktlinkingflags} && make && make install
@@ -55,6 +57,8 @@ kyototycoonRule :
 	cd kyototycoon &&./configure --prefix=$(PWD)/kyototycoon ${ktlinkingflags} --with-kc=$(PWD)/kyotocabinet && make && make install
 	echo export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) >> ${myEnv}
 	echo export PATH=$(PWD)/kyototycoon/bin:\$$PATH >> ${myEnv}
+	echo export kyotoTycoonIncl=\"-I$(PWD)/kyotocabinet/include -I$(PWD)/kyototycoon/include -DHAVE_KYOTO_TYCOON=1\" >> ${myEnv}
+	echo export kyotoTycoonLib=\"-L$(PWD)/kyototycoon/lib -L$(PWD)/kyotocabinet/lib -Wl,-rpath,$(PWD)/kyototycoon/lib -lkyototycoon -lkyotocabinet -lz -lbz2 -lpthread -lm -lstdc++\" >> ${myEnv}
 
 ifneq ($(TARGETOS), Darwin)
 CLAPACKPHASTFLAGS = CLAPACKPATH=$(PWD)/clapack
