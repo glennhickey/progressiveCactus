@@ -175,6 +175,8 @@ class ProjectWrapper:
             if self.options.rootOutgroupDists:
                 cmd += " --rootOutgroupDists %s" % self.options.rootOutgroupDists
                 cmd += " --rootOutgroupPaths %s" % self.options.rootOutgroupPaths
+            if self.options.root is not None:
+                cmd += " --root %s" % self.options.root
             system(cmd)
 
     # create a project in a dummy directory.  check if the
@@ -195,6 +197,8 @@ class ProjectWrapper:
         if self.options.rootOutgroupDists:
             cmd += " --rootOutgroupDists %s" % self.options.rootOutgroupDists
             cmd += " --rootOutgroupPaths %s" % self.options.rootOutgroupPaths
+        if self.options.root is not None:
+            cmd += " --root %s" % self.options.root
         system(cmd)
         projFilePathNew = os.path.join(tempPath,'%s_temp_project.xml' %
                                        self.alignmentDirName)

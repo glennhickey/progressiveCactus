@@ -108,6 +108,12 @@ def initParser():
     parser.add_option("--rootOutgroupPaths", dest="rootOutgroupPaths", type=str,
                       help="root outgroup path (--rootOutgroup must be given " +
                       "as well)", default=None)
+    parser.add_option("--root", dest="root", help="Name of ancestral node (which"
+                      " must appear in NEWICK tree in <seqfile>) to use as a "
+                      "root for the alignment.  Any genomes not below this node "
+                      "in the tree may be used as outgroups but will never appear"
+                      " in the output.  If no root is specifed then the root"
+                      " of the tree is used. ", default=None)
 
     #Kyoto Tycoon Options
     ktGroup = OptionGroup(parser, "kyoto_tycoon Options",
