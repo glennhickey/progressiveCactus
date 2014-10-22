@@ -357,7 +357,7 @@ def main():
     
     except RuntimeError, e:
         sys.stderr.write("Error: %s\n\n" % str(e))
-        if stage >= 0 and os.path.isdir(workDir):
+        if stage >= 0 and workDir is not None and os.path.isdir(workDir):
             sys.stderr.write("Temporary data was left in: %s\n" % workDir)
         if stage == 1:
             sys.stderr.write("More information can be found in %s\n" %
