@@ -102,6 +102,12 @@ def initParser():
                       help="Re-align nodes in the tree that have already" +
                       " been successfully aligned.",
                       default=False)
+    parser.add_option("--rootOutgroupDists", dest="rootOutgroupDists",
+                      help="root outgroup distance (--rootOutgroupPaths must " +
+                      "be given as well)", default=None)
+    parser.add_option("--rootOutgroupPaths", dest="rootOutgroupPaths", type=str,
+                      help="root outgroup path (--rootOutgroup must be given " +
+                      "as well)", default=None)
 
     #Kyoto Tycoon Options
     ktGroup = OptionGroup(parser, "kyoto_tycoon Options",
@@ -181,7 +187,7 @@ def validateInput(workDir, outputHalFile, options):
 def getJobTreeCommands(jtPath, parser, options):
     cmds = "--jobTree %s" % jtPath
     for optGroup in parser.option_groups:
-        if optGroup.title == "Jobtree Options":
+        if optGroup.title.startswith("jobTree") or optGroup.title.startswith("Jobtree"):
             for opt in optGroup.option_list:
                 if hasattr(options, opt.dest) and \
                     getattr(options, opt.dest) != optGroup.defaults[opt.dest]:
@@ -252,7 +258,6 @@ def runCactus(workDir, jtCommands, jtPath, options):
                                                                  pjPath,
                                                                  overwriteFlag,
                                                                  logFile)
-
     jtMonitor = JobStatusMonitor(jtPath, pjPath, logFile,
                                  deadlockCallbackFn=abortFunction(jtPath,
                                                                   options))
@@ -307,6 +312,10 @@ def main():
     try:
         parser = initParser()
         options, args = parser.parse_args()
+        if (options.rootOutgroupDists is not None) \
+        ^ (options.rootOutgroupPaths is not None):
+            parser.error("--rootOutgroupDists and --rootOutgroupPaths must be " +
+                         "provided together")
         if len(args) == 0:
             parser.print_help()
             return 1
@@ -334,7 +343,7 @@ def main():
         projWrapper.writeXml()
         jtCommands = getJobTreeCommands(jtPath, parser, options)
         runCactus(workDir, jtCommands, jtPath, options)
-        cmd = 'jobTreeStatus --failIfNotComplete --jobTree %s &> /dev/null' %\
+        cmd = 'jobTreeStatus --failIfNotComplete --jobTree %s > /dev/null 2>&1 ' %\
               jtPath
         system(cmd)
 

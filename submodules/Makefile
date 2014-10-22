@@ -16,20 +16,21 @@ envRefreshRule:
 	rm -f ${myEnv}
 
 virtPyRule :
-	python $(CURDIR)/virtualenv/virtualenv.py ${virtPyDir}
-	. ${virtPyEnv} && cd $(CURDIR)/networkx && ${virtPy} setup.py install
-	. ${virtPyEnv} && cd $(CURDIR)/psutil/ && ${virtPy} setup.py install
+	python $(PWD)/virtualenv/virtualenv.py ${virtPyDir}
+	. ${virtPyEnv} && cd $(PWD)/networkx && ${virtPy} setup.py install
+	. ${virtPyEnv} && cd $(PWD)/psutil/ && ${virtPy} setup.py install
+	. ${virtPyEnv} && cd $(PWD)/biopython/ && echo y | ${virtPy} setup.py install
 	cp ${virtPyEnv} ${myEnv}
-	echo export PYTHONPATH=$(CURDIR):\$$PYTHONPATH >> ${myEnv}
+	echo export PYTHONPATH=$(PWD):\$$PYTHONPATH >> ${myEnv}
 	echo export PATH=${virtPyDir}/bin:\$$PATH >> ${myEnv}
 
 ifeq ($(enablePBSTorque), yes)
 pbsDrmaaRule :
-	cd pbs-drmaa &&./configure --prefix=$(CURDIR)/pbs-drmaa && make && make install
-	echo export DRMAA_LIBRARY_PATH=$(CURDIR)/pbs-drmaa/lib/libdrmaa.so >> ${myEnv}
+	cd pbs-drmaa &&./configure --prefix=$(PWD)/pbs-drmaa && make && make install
+	echo export DRMAA_LIBRARY_PATH=$(PWD)/pbs-drmaa/lib/libdrmaa.so >> ${myEnv}
 
 drmaaPythonRule :
-	. ${virtPyEnv} && cd $(CURDIR)/drmaa-python/ && ${virtPy} setup.py install
+	. ${virtPyEnv} && cd $(PWD)/drmaa-python/ && ${virtPy} setup.py install
 else
 pbsDrmaaRule :
 	cd .
@@ -39,24 +40,28 @@ drmaaPythonRule :
 endif
 
 zlibRule :
-	cd zlib && ./configure --prefix=$(CURDIR)/zlib && make && make install
-	echo export PATH=$(CURDIR)/zlib/bin:\$$PATH >> ${myEnv}
+	cd zlib && ./configure --prefix=$(PWD)/zlib && make && make install
+	echo export PATH=$(PWD)/zlib/bin:\$$PATH >> ${myEnv}
 
 tokyocabinetRule :
-	cd tokyocabinet &&./configure --prefix=$(CURDIR)/tokyocabinet ${ktlinkingflags} --disable-bzip && make && make install
-	echo export PATH=$(CURDIR)/tokyocabinet/bin:\$$PATH >> ${myEnv}
+	cd tokyocabinet &&./configure --prefix=$(PWD)/tokyocabinet ${ktlinkingflags} --disable-bzip && make && make install
+	echo export PATH=$(PWD)/tokyocabinet/bin:\$$PATH >> ${myEnv}
+	echo export tokyoCabinetIncl=\"-I$(PWD)/tokyocabinet/include -DHAVE_TOKYO_CABINET=1\" >> ${myEnv}
+	echo export tokyoCabinetLib=\"-L$(PWD)/tokyocabinet/lib -Wl,-rpath,$(PWD)/tokyocabinet/lib -ltokyocabinet -lz -lbz2 -lpthread -lm\" >> ${myEnv}
 
 kyotocabinetRule :
-	cd kyotocabinet &&./configure --prefix=$(CURDIR)/kyotocabinet ${ktlinkingflags} && make && make install
-	echo export PATH=$(CURDIR)/kyotocabinet/bin:\$$PATH >> ${myEnv}
+	cd kyotocabinet &&./configure --prefix=$(PWD)/kyotocabinet ${ktlinkingflags} && make && make install
+	echo export PATH=$(PWD)/kyotocabinet/bin:\$$PATH >> ${myEnv}
 
 kyototycoonRule :
-	cd kyototycoon &&./configure --prefix=$(CURDIR)/kyototycoon ${ktlinkingflags} --with-kc=$(CURDIR)/kyotocabinet && make && make install
+	cd kyototycoon &&./configure --prefix=$(PWD)/kyototycoon ${ktlinkingflags} --with-kc=$(PWD)/kyotocabinet && make && make install
 	echo export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) >> ${myEnv}
-	echo export PATH=$(CURDIR)/kyototycoon/bin:\$$PATH >> ${myEnv}
+	echo export PATH=$(PWD)/kyototycoon/bin:\$$PATH >> ${myEnv}
+	echo export kyotoTycoonIncl=\"-I$(PWD)/kyotocabinet/include -I$(PWD)/kyototycoon/include -DHAVE_KYOTO_TYCOON=1\" >> ${myEnv}
+	echo export kyotoTycoonLib=\"-L$(PWD)/kyototycoon/lib -L$(PWD)/kyotocabinet/lib -Wl,-rpath,$(PWD)/kyototycoon/lib -lkyototycoon -lkyotocabinet -lz -lbz2 -lpthread -lm -lstdc++\" >> ${myEnv}
 
 ifneq ($(TARGETOS), Darwin)
-CLAPACKPHASTFLAGS = CLAPACKPATH=$(CURDIR)/clapack
+CLAPACKPHASTFLAGS = CLAPACKPATH=$(PWD)/clapack
 clapackRule :
 	cd clapack && make f2clib && make blaslib && make lib
 else
@@ -68,7 +73,7 @@ endif
 ifdef ENABLE_PHYLOP
 phastRule :
 	cd phast/src && make $(CLAPACKPHASTFLAGS)
-	echo export PATH=$(CURDIR)/phast/bin:\$$PATH >> ${myEnv}
+	echo export PATH=$(PWD)/phast/bin:\$$PATH >> ${myEnv}
 else
 phastRule :
 	cd .
@@ -76,11 +81,11 @@ endif
 
 kentToolBinariesRule :
 	cd kentToolBinaries && make
-	echo export PATH=$(CURDIR)/kentToolBinaries:\$$PATH >> ${myEnv}
+	echo export PATH=$(PWD)/kentToolBinaries:\$$PATH >> ${myEnv}
 
 hdf5Rule :
-	cd hdf5 &&./configure --prefix=$(CURDIR)/hdf5 --enable-cxx && make && make install
-	echo export PATH=$(CURDIR)/hdf5/bin:\$$PATH >> ${myEnv}
+	cd hdf5 &&./configure --prefix=$(PWD)/hdf5 --enable-cxx && make && make install
+	echo export PATH=$(PWD)/hdf5/bin:\$$PATH >> ${myEnv}
 
 
 # Important to export environment to override sonlib/include.mk
@@ -88,7 +93,7 @@ export
 
 ucsc.%:
 	cd $* && make
-	echo export PATH=$(CURDIR)/$*/bin:\$$PATH >> ${myEnv}
+	echo export PATH=$(PWD)/$*/bin:\$$PATH >> ${myEnv}
 
 clean: cabinetClean hdf5Clean pbsDrmaaClean zlibClean clapackClean phastClean kentToolBinariesClean ${ucscModules:%=clean.%}
 
@@ -106,7 +111,7 @@ zlibClean:
 cabinetClean:
 	cd kyotocabinet && make clean
 	cd kyototycoon && make clean
-	rm -f $(CURDIR)/tokyocabinet/lib/*.a $(CURDIR)/kyotocabinet/lib/*.a  $(CURDIR)/kyototycoon/lib/*.a
+	rm -f $(PWD)/tokyocabinet/lib/*.a $(PWD)/kyotocabinet/lib/*.a  $(PWD)/kyototycoon/lib/*.a
 
 ifeq ($(enablePBSTorque), yes)
 pbsDrmaaClean:
@@ -144,4 +149,4 @@ test.%:
 	. ${myEnv} && cd $* && make test
 
 datasets:
-	echo export SON_TRACE_DATASETS=$(CURDIR)/cactusTestData >> ${myEnv}
+	echo export SON_TRACE_DATASETS=$(PWD)/cactusTestData >> ${myEnv}

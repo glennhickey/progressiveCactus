@@ -1,5 +1,5 @@
 
-virtPyDir = $(CURDIR)/python
+virtPyDir = $(PWD)/python
 virtPyEnv = ${virtPyDir}/bin/activate
 virtPy = ${virtPyDir}/bin/python
 export
