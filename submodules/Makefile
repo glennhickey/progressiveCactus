@@ -19,7 +19,7 @@ virtPyRule :
 	python $(PWD)/virtualenv/virtualenv.py ${virtPyDir}
 	. ${virtPyEnv} && cd $(PWD)/networkx && ${virtPy} setup.py install
 	. ${virtPyEnv} && cd $(PWD)/psutil/ && ${virtPy} setup.py install
-	. ${virtPyEnv} && cd $(PWD)/biopython/ && echo y | ${virtPy} setup.py install
+	. ${virtPyEnv} && cd $(PWD)/biopython/ && echo y | ${virtPy} setup.py install | cat
 	cp ${virtPyEnv} ${myEnv}
 	echo export PYTHONPATH=$(PWD):\$$PYTHONPATH >> ${myEnv}
 	echo export PATH=${virtPyDir}/bin:\$$PATH >> ${myEnv}
