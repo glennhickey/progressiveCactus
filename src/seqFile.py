@@ -30,10 +30,12 @@ from optparse import OptionParser
 from optparse import OptionGroup
 import imp
 import string
+import re
 
 from sonLib.bioio import absSymPath
 from sonLib.nxtree import NXTree
 from sonLib.nxnewick import NXNewick
+from sonLib.bioio import popenCatch
 
 # parse the input seqfile for progressive cactus.  this file is in the
 # format of:
@@ -123,8 +125,45 @@ class SeqFile:
                     raise RuntimeError("No sequence specified for %s" % name)
                 else:
                     path = self.pathMap[name]
-                    if not os.path.exists:
+                    if not os.path.exists(path):
                         raise RuntimeError("Sequence path not found: %s" % path)
+                    self.sanityCheckSequence(path)
+
+    def sanityCheckSequence(self, path):
+        """Warns the user about common problems with the input sequences."""
+        # Relies on cactus_analyseAssembly output staying in the
+        # format it's currently in.
+        cmdline = "cactus_analyseAssembly"
+        if os.path.isdir(path):
+            cmdline = "cat %s/* | %s -" % (path, cmdline)
+        else:
+            cmdline += " %s" % path
+        output = popenCatch(cmdline)
+        # We don't do error-checking here, all we'll get is a prettier
+        # error message and it will be pretty obvious what's going on
+        # (i.e. the analyseAssembly output will have changed)
+        repeatMaskedFrac = float(re.search(r'Proportion-repeat-masked: ([0-9.]*)', output).group(1))
+        nFrac = float(re.search(r'ProportionNs: ([0-9.]*)', output).group(1))
+        # These thresholds are pretty arbitrary, but should be good for
+        # badly- to well-assembled vertebrate genomes.
+        if repeatMaskedFrac > 0.70:
+            sys.stderr.write("WARNING: sequence path %s has an extremely high "
+                             "proportion of masked bases: %f. progressiveCactus"
+                             " expects a soft-masked genome, i.e. all lowercase"
+                             " characters are considered masked. The process "
+                             "will proceed normally, but make sure you haven't "
+                             "accidentally provided an all-lowercase genome, "
+                             "in which case nothing will be aligned to "
+                             "it!\n\n" % (path, repeatMaskedFrac))
+        if nFrac > 0.30:
+            sys.stderr.write("WARNING: sequence path %s has an extremely high "
+                             "proportion of 'N' bases: %f. The process will "
+                             "proceed normally, but make sure your genome "
+                             "isn't hard-masked! Alignments to hard-masked "
+                             "genomes are much worse than to soft-masked "
+                             "genomes. If the genome just has a lot of "
+                             "poorly assembled regions, feel free to "
+                             "ignore this message.\n\n" % (path, nFrac))
 
     # remove leaves that do not have sequence data associated with them
     def cleanTree(self):

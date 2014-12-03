@@ -19,7 +19,7 @@ virtPyRule :
 	python $(PWD)/virtualenv/virtualenv.py ${virtPyDir}
 	. ${virtPyEnv} && cd $(PWD)/networkx && ${virtPy} setup.py install
 	. ${virtPyEnv} && cd $(PWD)/psutil/ && ${virtPy} setup.py install
-	. ${virtPyEnv} && cd $(PWD)/biopython/ && echo y | ${virtPy} setup.py install
+	. ${virtPyEnv} && cd $(PWD)/biopython/ && echo y | ${virtPy} setup.py install | cat
 	cp ${virtPyEnv} ${myEnv}
 	echo export PYTHONPATH=$(PWD):\$$PYTHONPATH >> ${myEnv}
 	echo export PATH=${virtPyDir}/bin:\$$PATH >> ${myEnv}
@@ -44,7 +44,7 @@ zlibRule :
 	echo export PATH=$(PWD)/zlib/bin:\$$PATH >> ${myEnv}
 
 tokyocabinetRule :
-	cd tokyocabinet &&./configure --prefix=$(PWD)/tokyocabinet ${ktlinkingflags} --disable-bzip && make && make install
+	cd tokyocabinet &&./configure --prefix=$(PWD)/tokyocabinet ${ktlinkingflags} --disable-bzip --with-zlib=$(PWD)/zlib && make && make install
 	echo export PATH=$(PWD)/tokyocabinet/bin:\$$PATH >> ${myEnv}
 	echo export tokyoCabinetIncl=\"-I$(PWD)/tokyocabinet/include -DHAVE_TOKYO_CABINET=1\" >> ${myEnv}
 	echo export tokyoCabinetLib=\"-L$(PWD)/tokyocabinet/lib -Wl,-rpath,$(PWD)/tokyocabinet/lib -ltokyocabinet -lz -lbz2 -lpthread -lm\" >> ${myEnv}
