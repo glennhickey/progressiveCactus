@@ -84,7 +84,7 @@ kentToolBinariesRule :
 	echo export PATH=$(PWD)/kentToolBinaries:\$$PATH >> ${myEnv}
 
 hdf5Rule :
-	cd hdf5 &&./configure --prefix=$(PWD)/hdf5 --enable-cxx && make && make install
+	cd hdf5 &&./configure --prefix=$(PWD)/hdf5 --enable-cxx && CFLAGS=-std=c99 make -e && make install
 	echo export PATH=$(PWD)/hdf5/bin:\$$PATH >> ${myEnv}
 
 
