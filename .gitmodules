@@ -61,3 +61,6 @@
 [submodule "submodules/biopython"]
 	path = submodules/biopython
 	url = https://github.com/biopython/biopython.git
+[submodule "submodules/cPecan"]
+	path = submodules/cPecan
+	url = https://github.com/benedictpaten/cPecan.git
