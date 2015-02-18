@@ -1,7 +1,7 @@
 include include.mk
 
 externalModules = zlib tokyocabinet kyotocabinet kyototycoon hdf5 pbs-drmaa clapack phast kentToolBinaries
-ucscModules = sonLib jobTree pinchesAndCacti matchingAndOrdering cactus hal cactus2hal
+ucscModules = sonLib jobTree cPecan pinchesAndCacti matchingAndOrdering cactus hal cactus2hal
 
 modules = ${externalModules} ${ucscModules}
 #modules = ${ucsc}
