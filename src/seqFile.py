@@ -115,8 +115,8 @@ class SeqFile:
             self.tree.setWeight(0, label, SeqFile.branchLen)
         
     def validate(self):
-        if len([i for i in self.tree.postOrderTraversal()]) <= 2:
-            raise RuntimeError("At least two valid leaf genomes required in"
+        if len([i for i in self.tree.postOrderTraversal()]) <= 1:
+            raise RuntimeError("At least one valid leaf genome required in"
                                " input tree")
         for node in self.tree.postOrderTraversal():
             if self.tree.isLeaf(node):
@@ -175,8 +175,8 @@ class SeqFile:
                 if name not in self.pathMap:
                     removeList.append(node)
                 numLeaves += 1
-        if numLeaves < 2:
-            raise RuntimeError("At least two valid leaf genomes required in"
+        if numLeaves < 1:
+            raise RuntimeError("At least one valid leaf genome required in"
                                " input tree")
         if len(removeList) == numLeaves:
             raise RuntimeError("No sequence path specified for any leaves in the tree")
