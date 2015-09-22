@@ -60,4 +60,4 @@
 	url = git://github.com/UCSCReconGroup/phast
 [submodule "submodules/biopython"]
 	path = submodules/biopython
-	url = https://github.com/biopython/biopython.git
+	url = git://github.com/biopython/biopython.git
