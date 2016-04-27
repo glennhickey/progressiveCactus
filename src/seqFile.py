@@ -139,11 +139,16 @@ class SeqFile:
         else:
             cmdline += " %s" % path
         output = popenCatch(cmdline)
-        # We don't do error-checking here, all we'll get is a prettier
-        # error message and it will be pretty obvious what's going on
-        # (i.e. the analyseAssembly output will have changed)
-        repeatMaskedFrac = float(re.search(r'Proportion-repeat-masked: ([0-9.]*)', output).group(1))
-        nFrac = float(re.search(r'ProportionNs: ([0-9.]*)', output).group(1))
+        try:
+            repeatMaskedFrac = float(re.search(r'Proportion-repeat-masked: ([0-9.]*)', output).group(1))
+            nFrac = float(re.search(r'ProportionNs: ([0-9.]*)', output).group(1))
+        except ValueError:
+            # This can happen if the genome has 0 length, making the fractions NaN.
+            # We warn the user but return afterwards, as the rest of the checks are
+            # dependent on the fraction values.
+            sys.stderr.write("WARNING: sequence path %s has 0 length. Consider "
+                             "removing it from your input file.\n\n" % path)
+            return
         # These thresholds are pretty arbitrary, but should be good for
         # badly- to well-assembled vertebrate genomes.
         if repeatMaskedFrac > 0.70:
