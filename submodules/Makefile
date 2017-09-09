@@ -84,9 +84,9 @@ kentToolBinariesRule :
 	echo export PATH=$(PWD)/kentToolBinaries:\$$PATH >> ${myEnv}
 
 hdf5Rule :
-	cd hdf5 &&./configure --prefix=$(PWD)/hdf5 --enable-cxx && CFLAGS=-std=c99 make -e && make install
+	if [ ! -d "hdf5" ]; then wget http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.gz && tar zxf hdf5-1.10.1.tar.gz && mv hdf5-1.10.1 hdf5; fi
+	cd hdf5 &&./configure --prefix=$(PWD)/hdf5 --enable-cxx && CFLAGS=-std=c99 make -e && make install	
 	echo export PATH=$(PWD)/hdf5/bin:\$$PATH >> ${myEnv}
-
 
 # Important to export environment to override sonlib/include.mk
 export
@@ -141,7 +141,7 @@ kentToolBinariesClean :
 	cd kentToolBinaries && make clean
 
 hdf5Clean:
-	cd hdf5 && make clean
+	rm -rf hdf5
 
 test: ${ucscModules:%=test.%}
 
