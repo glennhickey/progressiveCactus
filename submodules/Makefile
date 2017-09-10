@@ -23,6 +23,7 @@ virtPyRule :
 	cp ${virtPyEnv} ${myEnv}
 	echo export PYTHONPATH=$(PWD):\$$PYTHONPATH >> ${myEnv}
 	echo export PATH=${virtPyDir}/bin:\$$PATH >> ${myEnv}
+	echo export PYTHONPATH=$(PWD)/biopython:\$$PYTHONPATH >> ${myEnv}
 
 ifeq ($(enablePBSTorque), yes)
 pbsDrmaaRule :
