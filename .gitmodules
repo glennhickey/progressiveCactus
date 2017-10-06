@@ -1,15 +1,15 @@
 [submodule "submodules/sonLib"]
 	path = submodules/sonLib
-	url = git://github.com/benedictpaten/sonLib.git
+	url = git://github.com/ComparativeGenomicsToolkit/sonLib.git
 [submodule "submodules/jobTree"]
 	path = submodules/jobTree
-	url = git://github.com/benedictpaten/jobTree.git
+	url = git://github.com/ComparativeGenomicsToolkit/jobTree.git
 [submodule "submodules/matchingAndOrdering"]
 	path = submodules/matchingAndOrdering
-	url = git://github.com/benedictpaten/matchingAndOrdering.git
+	url = git://github.com/ComparativeGenomicsToolkit/matchingAndOrdering.git
 [submodule "submodules/pinchesAndCacti"]
 	path = submodules/pinchesAndCacti
-	url = git://github.com/benedictpaten/pinchesAndCacti.git
+	url = git://github.com/ComparativeGenomicsToolkit/pinchesAndCacti.git
 [submodule "submodules/hal"]
 	path = submodules/hal
 	url = git://github.com/glennhickey/hal.git
@@ -18,7 +18,7 @@
 	url = git://github.com/glennhickey/cactus2hal.git
 [submodule "submodules/cactus"]
 	path = submodules/cactus
-	url = git://github.com/benedictpaten/cactus.git
+	url = git://github.com/ComparativeGenomicsToolkit/cactus.git
 [submodule "submodules/kyototycoon"]
 	path = submodules/kyototycoon
 	url = git://github.com/UCSCReconGroup/kyototycoon.git
@@ -58,3 +58,6 @@
 [submodule "submodules/biopython"]
 	path = submodules/biopython
 	url = git://github.com/biopython/biopython.git
+[submodule "submodules/cPecan"]
+	path = submodules/cPecan
+	url = git://github.com/ComparativeGenomicsToolkit/cPecan.git

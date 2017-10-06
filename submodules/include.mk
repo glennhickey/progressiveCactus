@@ -19,7 +19,7 @@ mysqlLibs = -lm
 
 include  ${sonLibRootPath}/include.mk
 # copy over form sonlib so modules work with mavericks (namely kyoto cabinet)
-CXX=${cpp}
+#CXX=${cpp}
 
 dataSetsPath=/Users/benedictpaten/Dropbox/Documents/work/myPapers/genomeCactusPaper/dataSets
 
