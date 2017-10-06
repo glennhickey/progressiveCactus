@@ -3,7 +3,7 @@
 	url = git://github.com/ComparativeGenomicsToolkit/sonLib.git
 [submodule "submodules/jobTree"]
 	path = submodules/jobTree
-	url = git://github.com/ComparativeGenomicsToolkit/jobTree.git
+	url = git://github.com/benedictpaten/jobTree.git
 [submodule "submodules/matchingAndOrdering"]
 	path = submodules/matchingAndOrdering
 	url = git://github.com/ComparativeGenomicsToolkit/matchingAndOrdering.git
