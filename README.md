@@ -12,6 +12,7 @@ Installation
 * gcc 4.2 or newer
 * python 2.7
 * wget
+* ping
 * 64bit processor and build environment
 * 150GB+ of memory on at least one machine when aligning mammal-sized genomes; less memory is needed for smaller genomes.
 * Parasol or SGE for cluster support.
