@@ -188,6 +188,11 @@ class ProjectWrapper:
             return False
         oldPath = os.path.dirname(projPath + "/")
         tempPath = "%s_temp" % oldPath
+        # Fix for relative directories
+        if oldPath[0:2] == './':
+            oldPath = oldPath[2:]
+        if tempPath[0:2] == './':
+            tempPath = tempPath[2:]
         if os.path.exists(tempPath):
             system("rm -rf %s" % tempPath)
         cmd = "cactus_createMultiCactusProject.py %s %s --fixNames=%d" % (
