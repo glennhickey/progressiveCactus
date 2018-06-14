@@ -1,3 +1,11 @@
+# IMPORTANT: Progressive Cactus has moved here:
+# [https://github.com/ComparativeGenomicsToolkit/cactus](https://github.com/ComparativeGenomicsToolkit/cactus)
+# This version a) is actively maintained and developed and b) supports cloud computing platforms by using Toil in place of JobTree
+
+#
+#
+# 
+ 
 Progressive Cactus Manual
 =====
 *v0.0 by Glenn Hickey (hickey@soe.ucsc.edu)*
