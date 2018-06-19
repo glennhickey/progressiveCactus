@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 
 # Progressive Cactus Package
 # Copyright (C) 2009-2012 by Glenn Hickey (hickey@soe.ucsc.edu)
@@ -79,6 +79,10 @@ class SeqFile:
                 tokens = line.split()
                 if self.tree is None and (len(tokens) == 1 or line[0] == '('):
                     newickParser = NXNewick()
+                    if not line.strip().endswith(");"):
+                        raise RuntimeError("The newick tree %s may not "
+                                           "have a branch length after "
+                                           "the root node." % line)
                     try:
                         self.tree = newickParser.parseString(line)
                     except:
@@ -133,6 +137,7 @@ class SeqFile:
         """Warns the user about common problems with the input sequences."""
         # Relies on cactus_analyseAssembly output staying in the
         # format it's currently in.
+        return
         cmdline = "cactus_analyseAssembly"
         if os.path.isdir(path):
             cmdline = "cat %s/* | %s -" % (path, cmdline)
